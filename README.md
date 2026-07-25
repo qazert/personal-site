@@ -1,0 +1,70 @@
+# miguelpedroso.com
+
+Portfolio site for Miguel Pedroso, product designer. Next.js App Router,
+Tailwind v4, self-hosted Inter, Motion for interaction.
+
+> **Before publishing, read [CONTENT-TODO.md](./CONTENT-TODO.md).** The site
+> currently ships with placeholder case studies, testimonials and imagery.
+
+## Running it
+
+```bash
+npm install
+npm run dev          # http://localhost:3000
+npm run build        # production build
+npm run lint
+```
+
+## Where things live
+
+| Path | What |
+| --- | --- |
+| `content/site.ts` | Every word on the site. Copy changes happen here and nowhere else. |
+| `app/` | Routes: home, `/services`, `/works`, `/works/[slug]`, `/about`, `/contact`. |
+| `components/site/` | Header, footer, page header, CTA band. |
+| `components/ui/` | Button, scroll reveal, accordion, client mark. |
+| `app/globals.css` | Design tokens: colour, radius, elevation, type utilities. |
+| `public/` | Images. Placeholder plates until real exports land. |
+
+## Design tokens
+
+Defined once in `app/globals.css` as CSS variables, exposed to Tailwind through
+`@theme inline`.
+
+- **Colour** `#101010` ink, `#F1F1F1` paper, `#5B23FF` accent. The accent has a
+  darker variant for text on light backgrounds and a lighter one for dark, so
+  every use clears WCAG AA. Do not use raw `#5B23FF` for body text.
+- **Radius** one scale, one rule: buttons and tags are pills, inputs `12px`,
+  cards `16px`, media panels `24px`.
+- **Theme** light and dark are both first class. `data-theme` is set on `<html>`
+  before first paint by `components/site/ThemeScript.tsx`, defaulting to the
+  system preference with a manual override stored in `localStorage`.
+
+## Motion
+
+Every animation is entry, feedback or state transition. There is no decorative
+motion and no scroll hijacking. All of it collapses under
+`prefers-reduced-motion`, and a `<noscript>` rule in `app/layout.tsx` makes the
+reveal-on-scroll content visible when JavaScript does not run.
+
+## Contact form
+
+`app/api/contact/route.ts` validates the submission and forwards it to whatever
+webhook you set in `CONTACT_FORWARD_URL` (Formspree, Zapier, a Slack incoming
+webhook, your own mailer). Copy `.env.example` to `.env.local` and fill it in.
+
+Until that variable is set the endpoint answers `501` and the form shows its
+error state with a mailto fallback. It never pretends a message was delivered.
+
+## Tooling
+
+```bash
+npm run images       # regenerate the placeholder plates in /public
+npm run shots        # screenshot every page, audit for layout defects
+npm run interactions # drive theme toggle, mobile menu, accordion, contact form
+```
+
+`npm run shots` walks every route at 1440px and 390px in both themes and reports
+horizontal overflow, wrapped CTA labels, undersized touch targets and console
+errors. Start the server first (`npm run build && npm start`), or pass a URL:
+`node scripts/shots.mjs https://staging.example.com`.
