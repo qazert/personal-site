@@ -2,10 +2,12 @@ import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/ui/Reveal";
 import { WorkCard } from "@/components/work/WorkCard";
-import { caseStudies, cta } from "@/content/site";
+import { workItems, cta } from "@/content/site";
 
 export function SelectedWork() {
-  const shown = caseStudies.slice(0, 4);
+  /* Two-up on the home page, against the three-up grid on /works, so the two
+     pages do not read as the same section twice. */
+  const shown = workItems.slice(0, 4);
 
   return (
     <section className="border-t border-line">
@@ -30,9 +32,9 @@ export function SelectedWork() {
         </Reveal>
 
         <div className="mt-10 grid gap-10 md:mt-14 md:gap-x-8 md:gap-y-14 lg:grid-cols-2">
-          {shown.map((study, i) => (
-            <Reveal key={study.slug} index={i % 2}>
-              <WorkCard study={study} priority={i === 0} />
+          {shown.map((item, i) => (
+            <Reveal key={item.slug} index={i % 2}>
+              <WorkCard item={item} priority={i === 0} size="lg" />
             </Reveal>
           ))}
         </div>

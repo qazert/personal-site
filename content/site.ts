@@ -1,28 +1,25 @@
 /* ============================================================================
  * SINGLE SOURCE OF TRUTH FOR EVERY WORD ON THIS SITE.
  *
- * READ THIS BEFORE PUBLISHING
- * ---------------------------
- * The CV could not be reached when this site was built, so every fact below
- * marked `PLACEHOLDER` is a structural stand-in written to the right shape and
- * length. It is NOT real. Replace it before the site goes live.
+ * Written from Miguel's CV (July 2026). Everything here is either taken from
+ * the CV or is a stance rather than a claim. Where the CV did not give enough
+ * detail to write something specific, the gap is marked `TODO` rather than
+ * filled with an invention.
  *
- * Must-replace list is tracked in CONTENT-TODO.md at the repo root.
+ * Positioning: works for two audiences at once, companies hiring and clients
+ * commissioning. No pricing, no packages, no stated availability window.
+ *
  * Nothing outside this file needs editing to change copy.
  * ==========================================================================*/
 
 export const site = {
   name: "Miguel Pedroso",
   role: "Product Designer",
-  // PLACEHOLDER: swap for the address you actually want public.
-  email: "hello@miguelpedroso.com",
+  email: "mafpedroso@gmail.com",
   location: "Lisbon, Portugal",
   url: "https://miguelpedroso.com",
-  // PLACEHOLDER: real profile URLs.
   socials: [
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/miguelpedroso" },
-    { label: "Dribbble", href: "https://dribbble.com/miguelpedroso" },
-    { label: "Read.cv", href: "https://read.cv/miguelpedroso" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/miguelpedroso" },
   ],
 } as const;
 
@@ -33,73 +30,85 @@ export const nav = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-/* One label per intent. Used in the nav, every CTA band, and the footer. */
+/* One label per intent, used in the nav, every CTA band and the footer.
+   Deliberately neutral: it has to read right to a hiring manager and to a
+   founder looking for a designer. */
 export const cta = {
-  primary: { label: "Book a call", href: "/contact" },
+  primary: { label: "Get in touch", href: "/contact" },
   secondary: { label: "View work", href: "/works" },
 } as const;
 
 export const home = {
   headline: "I make complex software feel obvious.",
-  // 13 words.
+  // 16 words. Has to fit two lines beside the hero image at desktop.
   subhead:
-    "Product design for software teams whose interface has outgrown its first version.",
-  availability: "Taking on two projects for Q4",
+    "Product designer in Lisbon, working on software where the user is an expert under time pressure.",
+  availability: "Working on industrial software at Critical Techworks",
 
   benefits: {
-    heading: "What changes when the design is right",
+    heading: "What I am actually good at",
     items: [
       {
-        title: "Your team stops rebuilding the same screen",
-        body: "Every flow ships with states, edge cases and responsive rules already decided, so engineering builds it once.",
+        title: "Turning messy real-world processes into clear screens",
+        body: "Factory floors, supply chains, clinical workflows. I spend the time to understand how the work really happens before drawing anything.",
       },
       {
-        title: "New users get to value on day one",
-        body: "Onboarding and empty states are designed as part of the product, not bolted on after launch.",
+        title: "Designing for people who cannot stop to read a manual",
+        body: "Operators and specialists work in short bursts under pressure. Every flow has to survive being interrupted and picked back up.",
       },
       {
-        title: "The interface holds as you add features",
-        body: "You get a documented system with tokens and components, so the tenth feature looks like the first.",
+        title: "Working close enough to engineering that designs get built",
+        body: "I define problems and requirements with engineers rather than handing finished screens over a wall, then validate through prototypes and testing.",
       },
     ],
   },
 
   proof: {
-    heading: "Teams I have built with",
-    // PLACEHOLDER: these numbers must come from your own records.
+    heading: "Where the work has landed",
     stats: [
-      { value: "9 years", label: "designing software products" },
-      { value: "30+", label: "products shipped end to end" },
-      { value: "4", label: "design systems built from zero" },
+      { value: "5 years", label: "designing digital products" },
+      { value: "10%", label: "increase in adoption on a redesigned part-exchange flow" },
+      { value: "BMW plants", label: "where the products I design are used daily" },
     ],
+    sectors: {
+      heading: "Sectors I have designed for",
+      items: [
+        "Industrial and manufacturing",
+        "Supply chain and logistics",
+        "Healthcare",
+        "E-commerce",
+        "SaaS",
+        "Security",
+      ],
+    },
   },
 
   faq: {
-    heading: "Questions worth asking before we start",
+    heading: "Questions worth asking before we talk",
     items: [
       {
-        q: "How does a project usually start?",
-        a: "With a 30 minute call, then a short written scope. I map what you want to change, what already exists and what success looks like, and send back a plan with a fixed timeline before any design work begins.",
+        q: "What kind of work are you looking for?",
+        a: "Product design on software that carries real complexity. I am open to both a full-time role and project work, and I would rather talk about the problem first and work out which arrangement fits afterwards.",
       },
       {
-        q: "How long does a project take?",
-        a: "A focused audit and redesign of one flow runs two to three weeks. A full product from research to build-ready design runs six to ten weeks. Retainers run month to month with an agreed number of design days.",
+        q: "How do you work with engineers?",
+        a: "Closely, and early. At Critical Techworks I define problems and product requirements together with engineers and operators rather than handing finished screens over. Structure gets agreed while changing it is still cheap.",
       },
       {
-        q: "How do you price the work?",
-        a: "Fixed price per project phase, quoted up front from the scope. No hourly billing and no surprise invoices. Retainers are a flat monthly fee for a set amount of design time.",
+        q: "Do you do research, or only the interface?",
+        a: "Both. Discovery activities, user flows and usability testing are part of how I get to a design, not a separate service. I hold an NN/G UX certificate and use those methods scaled to whatever time the project actually has.",
       },
       {
-        q: "Do you work directly with our engineers?",
-        a: "Yes, and it is where most of the value shows up. I work in your Slack and your tickets, hand over inspectable files with tokens and specs, and review builds before release.",
+        q: "What about design systems?",
+        a: "I design inside a system wherever one exists and extend it where it has gaps. Consistency across a growing product matters more to me than any individual screen looking good in isolation.",
       },
       {
-        q: "We already have a design system. Does that change things?",
-        a: "It usually speeds things up. I design inside your system, extend it where it has gaps, and document anything new so your team can keep using it after I leave.",
+        q: "Web or mobile?",
+        a: "Both. Recent work at Critical Techworks shipped on Web and iOS in parallel, which means designing the same flow twice for two very different contexts of use.",
       },
       {
-        q: "Do you handle research, or only the interface?",
-        a: "Both, scaled to the budget. That can mean a full round of user interviews and usability testing, or a lighter pass over your support tickets and analytics when the answers are already in your data.",
+        q: "Where are you based?",
+        a: "Lisbon. I work in Portuguese and English, and I am comfortable with distributed teams across European time zones.",
       },
     ],
   },
@@ -107,72 +116,61 @@ export const home = {
 
 /* --------------------------------------------------------------------------
  * SERVICES
+ * Capabilities, not packages. No prices and no quoted timelines: the site has
+ * to work for a company hiring as well as a client commissioning.
  * ------------------------------------------------------------------------*/
 export const services = {
-  headline: "Four ways to work together",
+  headline: "How I work, and what I bring",
   subhead:
-    "Each engagement has a fixed scope, a fixed price and a defined handover. Pick the one that matches where your product is.",
+    "The same set of skills applied whether I am embedded in a product team or brought in for a specific piece of work.",
 
   offerings: [
+    {
+      slug: "discovery",
+      title: "Product discovery and research",
+      summary:
+        "Understanding how the work actually happens before deciding what to build.",
+      includes: [
+        "Discovery sessions with the people who use the product",
+        "Problem and requirement definition alongside engineering",
+        "User flows and information architecture",
+        "Usability testing to validate before build",
+      ],
+    },
     {
       slug: "product-design",
       title: "End-to-end product design",
       summary:
-        "From problem to build-ready design for a new product or a major new area of an existing one.",
-      timeline: "6 to 10 weeks",
-      bestFor: "Teams building something new, or rebuilding something that grew badly.",
+        "From the first sketch of a flow to the design an engineer can build from.",
       includes: [
-        "Discovery: interviews, competitor teardown, jobs to be done",
-        "Information architecture and user flows",
-        "Wireframes reviewed with your engineers before visual design",
-        "Full interface design, including empty, loading and error states",
-        "Prototype for testing and stakeholder sign-off",
-        "Build-ready handover with tokens, specs and a walkthrough",
+        "Wireframes reviewed with engineers before visual design",
+        "Interface design including empty, loading and error states",
+        "Prototypes for testing and stakeholder sign-off",
+        "Handover and review of the build before release",
       ],
     },
     {
-      slug: "ux-audit",
-      title: "UX audit and redesign",
+      slug: "complex-flows",
+      title: "Prototyping complex flows",
       summary:
-        "A structured teardown of what is costing you users, followed by the redesign of the flows that matter most.",
-      timeline: "2 to 3 weeks",
-      bestFor: "Live products with weak activation, high churn or a rising support load.",
+        "Multi-step, multi-role processes that cannot be explained in a single screen.",
       includes: [
-        "Heuristic review of every core flow, scored and prioritised",
-        "Session recording and support ticket review",
-        "A written report ranked by impact against effort",
-        "Redesign of the two or three flows with the most upside",
-        "A backlog your team can keep working through afterwards",
+        "Flows that span teams, sites and systems",
+        "Real-time and multi-stage transactional states",
+        "Designs that survive being interrupted and resumed",
+        "The same flow resolved for both Web and iOS",
       ],
     },
     {
       slug: "design-systems",
-      title: "Design systems",
+      title: "Design systems and craft",
       summary:
-        "A component library and token set your designers and engineers can both build against.",
-      timeline: "4 to 6 weeks",
-      bestFor: "Products where every new feature looks slightly different from the last.",
+        "Components and rules that keep a product coherent as it grows.",
       includes: [
-        "Audit of every component and pattern currently in production",
-        "Colour, type, spacing and radius tokens defined once",
-        "Component library with variants, states and usage rules",
-        "Documentation written for engineers, not just designers",
-        "Migration plan so the rollout does not block the roadmap",
-      ],
-    },
-    {
-      slug: "design-partner",
-      title: "Ongoing design partner",
-      summary:
-        "A set number of design days each month, for teams that need design continuously rather than in one push.",
-      timeline: "Monthly, three month minimum",
-      bestFor: "Funded teams without a senior designer in house.",
-      includes: [
-        "An agreed number of design days per month",
-        "Roadmap work designed ahead of each sprint",
-        "Design review on shipped builds",
-        "Direct access in your Slack during working hours",
-        "The system maintained as the product grows",
+        "Component libraries with variants and states",
+        "Colour, type and spacing tokens defined once",
+        "Documentation aimed at engineers, not only designers",
+        "UI and visual craft applied consistently across the product",
       ],
     },
   ],
@@ -182,15 +180,15 @@ export const services = {
     steps: [
       {
         title: "Frame the problem",
-        body: "Before anything gets drawn, we agree what is broken, who it affects and how we will know it worked. Written down, in one page.",
+        body: "Before anything gets drawn, agree what is broken, who it affects and how we will know it worked. Written down, in one page.",
       },
       {
         title: "Design in the open",
-        body: "Work goes up every few days rather than in one reveal. You and your engineers see structure early, when changing it is still cheap.",
+        body: "Work goes up every few days rather than in one reveal. Engineers see structure early, when changing it is still cheap.",
       },
       {
-        title: "Hand over and stay close",
-        body: "You get inspectable files, tokens and specs, plus a walkthrough with the people building it. I review the build before it ships.",
+        title: "Validate, then ship",
+        body: "Prototype and test with the people who will use it, hand over specs, and review the build before it reaches production.",
       },
     ],
   },
@@ -199,303 +197,170 @@ export const services = {
 /* --------------------------------------------------------------------------
  * WORK
  *
- * PLACEHOLDER: every case study below is fictional scaffolding. Replace the
- * client names, metrics and narrative with your real projects, and drop real
- * imagery into /public/work/ using the same filenames.
+ * A 3x2 grid, no detail pages for now. Every entry is a real project from the
+ * CV, written only to the level of detail the CV supports.
+ *
+ * TODO: drop real imagery into /public/work/ at the same filenames. The plates
+ * there now are generated placeholders.
  * ------------------------------------------------------------------------*/
-export type CaseStudy = {
+export type WorkItem = {
   slug: string;
   client: string;
   title: string;
   discipline: string;
   year: string;
   summary: string;
-  role: string[];
-  duration: string;
   cover: string;
   coverAlt: string;
-  challenge: string;
-  approach: { title: string; body: string }[];
-  gallery: { src: string; alt: string; caption: string }[];
-  outcomes: { value: string; label: string }[];
-  placeholder: true;
 };
 
-export const caseStudies: CaseStudy[] = [
+export const workItems: WorkItem[] = [
   {
-    slug: "ledgerline",
-    client: "Ledgerline",
-    title: "Rebuilding a reconciliation tool finance teams stopped dreading",
-    discipline: "Product design, design system",
-    year: "2025",
+    slug: "part-exchange",
+    client: "Critical Techworks / BMW",
+    title: "Part-exchange workflows across manufacturing teams",
+    discipline: "Product design, Web and iOS",
+    year: "2023 - 2026",
     summary:
-      "A month-end reconciliation product where every accountant had built their own spreadsheet workaround. We rebuilt the core matching flow around what they were actually doing.",
-    role: ["Product design", "User research", "Design system"],
-    duration: "9 weeks",
-    cover: "/work/ledgerline-cover.jpg",
-    coverAlt: "Ledgerline reconciliation product cover image",
-    challenge:
-      "The matching screen had grown to fourteen filters and three competing table views. New accountants took most of a week to become useful, and the support team was answering the same six questions every month.",
-    approach: [
-      {
-        title: "Watched a real month-end close",
-        body: "Six sessions with accountants at three customers, recorded end to end. The workarounds people had built in spreadsheets turned out to be the real specification.",
-      },
-      {
-        title: "Cut the interface down to the decision",
-        body: "Matching is one judgement repeated hundreds of times. We designed a single focused view for that judgement and moved everything else behind it.",
-      },
-      {
-        title: "Made the rules visible",
-        body: "Automated matches now explain themselves in plain language, so reviewers can accept a batch without opening every row.",
-      },
-    ],
-    gallery: [
-      {
-        src: "/work/ledgerline-01.jpg",
-        alt: "The redesigned match review screen",
-        caption: "The match review screen, reduced to one decision at a time.",
-      },
-      {
-        src: "/work/ledgerline-02.jpg",
-        alt: "Rule explanation panel",
-        caption: "Every automated match explains why it matched.",
-      },
-    ],
-    outcomes: [
-      { value: "Under a day", label: "to onboard a new accountant" },
-      { value: "3 views to 1", label: "in the core matching flow" },
-      { value: "62 components", label: "documented and handed over" },
-    ],
-    placeholder: true,
+      "Streamlined how teams exchange parts across a plant, reducing transactional friction and lifting user adoption by 10%.",
+    cover: "/work/part-exchange.jpg",
+    coverAlt: "Part-exchange workflow project",
   },
   {
-    slug: "northbeam",
-    client: "Northbeam Health",
-    title: "A clinical scheduling system nurses could learn between shifts",
-    discipline: "UX audit, redesign",
-    year: "2024",
+    slug: "incident-reporting",
+    client: "Critical Techworks / BMW",
+    title: "Incident reporting for plant operators",
+    discipline: "Product design, Web and iOS",
+    year: "2023 - 2026",
     summary:
-      "Rota software used by ward managers under time pressure. The audit found that most errors happened in one screen, so that is where the redesign went.",
-    role: ["UX audit", "Product design", "Usability testing"],
-    duration: "5 weeks",
-    cover: "/work/northbeam-cover.jpg",
-    coverAlt: "Northbeam Health scheduling product cover image",
-    challenge:
-      "Ward managers were building rotas in a grid that hid conflicts until save. Mistakes surfaced hours later as missed shifts, and the workaround was printing the rota and checking it by hand.",
-    approach: [
-      {
-        title: "Scored every flow against real failures",
-        body: "The audit paired a heuristic review with four months of support tickets. Two thirds of reported problems traced back to a single screen.",
-      },
-      {
-        title: "Moved conflict detection to the moment of the mistake",
-        body: "Conflicts now appear as the shift is dragged, in place, rather than as a modal after saving.",
-      },
-      {
-        title: "Designed for interruption",
-        body: "Ward managers work in ninety second bursts. Every state now survives leaving the screen and coming back.",
-      },
-    ],
-    gallery: [
-      {
-        src: "/work/northbeam-01.jpg",
-        alt: "Rota builder with inline conflict warnings",
-        caption: "Conflicts surface during the drag, not after the save.",
-      },
-      {
-        src: "/work/northbeam-02.jpg",
-        alt: "Mobile shift view",
-        caption: "The nurse-facing view, designed for one hand on a ward.",
-      },
-    ],
-    outcomes: [
-      { value: "1 screen", label: "responsible for most reported errors" },
-      { value: "14 flows", label: "audited and ranked by impact" },
-      { value: "8 sessions", label: "of usability testing before build" },
-    ],
-    placeholder: true,
+      "A tool that lets operators document, track and resolve issues on the line without leaving what they were doing.",
+    cover: "/work/incident-reporting.jpg",
+    coverAlt: "Incident reporting tool project",
   },
   {
-    slug: "atlas-freight",
-    client: "Atlas Freight",
-    title: "Turning a logistics dashboard into something dispatchers trust",
-    discipline: "Product design",
-    year: "2024",
+    slug: "assembly-line-navigation",
+    client: "Critical Techworks / BMW",
+    title: "Assembly-line navigation, rebuilt for clarity",
+    discipline: "Interaction design, information architecture",
+    year: "2023 - 2026",
     summary:
-      "A live shipment dashboard that dispatchers had learned to ignore. The redesign focused on the small number of shipments that actually needed a human.",
-    role: ["Product design", "Information architecture"],
-    duration: "7 weeks",
-    cover: "/work/atlas-cover.jpg",
-    coverAlt: "Atlas Freight dispatch dashboard cover image",
-    challenge:
-      "Every shipment was shown with equal weight, so the twelve that needed attention were buried under four hundred that did not. Dispatchers worked from a side channel instead.",
-    approach: [
-      {
-        title: "Defined what counts as an exception",
-        body: "Two weeks with the dispatch team produced a shared definition of when a shipment needs a person. Everything else became background.",
-      },
-      {
-        title: "Built the dashboard around exceptions",
-        body: "The default view now shows only what is off-plan, with the full list one click away rather than in front by default.",
-      },
-      {
-        title: "Gave each alert a next action",
-        body: "No alert appears without the action it implies attached to it, so the screen is a queue rather than a report.",
-      },
-    ],
-    gallery: [
-      {
-        src: "/work/atlas-01.jpg",
-        alt: "Exception-first dispatch view",
-        caption: "The default view shows only shipments that are off-plan.",
-      },
-      {
-        src: "/work/atlas-02.jpg",
-        alt: "Shipment detail with next action",
-        caption: "Each alert carries the action it implies.",
-      },
-    ],
-    outcomes: [
-      { value: "400 to 12", label: "items in the default view" },
-      { value: "Every alert", label: "ships with a next action" },
-      { value: "2 weeks", label: "of discovery with the dispatch team" },
-    ],
-    placeholder: true,
+      "Reworked how people move through assembly-line software, so the right screen is reachable without training.",
+    cover: "/work/assembly-line.jpg",
+    coverAlt: "Assembly line navigation project",
   },
   {
-    slug: "cadence",
-    client: "Cadence",
-    title: "One design system for a product that had grown three of them",
-    discipline: "Design system",
-    year: "2023",
+    slug: "supply-chain-visibility",
+    client: "Critical Techworks / BMW",
+    title: "Real-time visibility across a multi-stage supply chain",
+    discipline: "Product design, complex flows",
+    year: "2023 - 2026",
     summary:
-      "Three years of fast shipping had produced three visual languages in one product. We consolidated them into a single tokenised system without pausing the roadmap.",
-    role: ["Design system", "Documentation"],
-    duration: "6 weeks",
-    cover: "/work/cadence-cover.jpg",
-    coverAlt: "Cadence design system cover image",
-    challenge:
-      "Nine button variants, four type scales and no shared spacing rule. Designers and engineers were each maintaining their own version of the truth.",
-    approach: [
-      {
-        title: "Inventoried what was actually in production",
-        body: "Every component in the live product was catalogued before anything new was drawn. Most variants had no reason to exist.",
-      },
-      {
-        title: "Defined tokens both sides could use",
-        body: "Colour, type, spacing and radius were agreed once and named identically in design and in code.",
-      },
-      {
-        title: "Rolled it out feature by feature",
-        body: "No big-bang migration. Each new feature shipped on the system, and old screens were converted as they were touched.",
-      },
-    ],
-    gallery: [
-      {
-        src: "/work/cadence-01.jpg",
-        alt: "Token and component documentation",
-        caption: "Tokens named identically in Figma and in code.",
-      },
-      {
-        src: "/work/cadence-02.jpg",
-        alt: "Component library overview",
-        caption: "Nine button variants reduced to three, with rules for each.",
-      },
-    ],
-    outcomes: [
-      { value: "9 to 3", label: "button variants in production" },
-      { value: "1 token set", label: "shared by design and engineering" },
-      { value: "Zero", label: "roadmap weeks lost to migration" },
-    ],
-    placeholder: true,
+      "Helped develop tools that show where a transaction actually is when it passes through several stages and several teams.",
+    cover: "/work/supply-chain.jpg",
+    coverAlt: "Supply chain visibility project",
+  },
+  {
+    slug: "nutrition-platform",
+    client: "Decode",
+    title: "UX and UI redesign for a Portuguese nutrition brand",
+    discipline: "UX and UI design",
+    year: "2022",
+    summary:
+      "A full redesign for a well-known nutrition company in Portugal, from discovery through to high-fidelity delivery.",
+    cover: "/work/nutrition.jpg",
+    coverAlt: "Nutrition brand redesign project",
+  },
+  {
+    slug: "confederacao-musical",
+    client: "Confederação Musical Portuguesa",
+    title: "Brand identity for a cultural institution",
+    discipline: "Visual design, brand identity",
+    year: "2020",
+    summary:
+      "Defined the brand identity and designed the organisation's first set of social media assets and digital presence.",
+    cover: "/work/confederacao.jpg",
+    coverAlt: "Confederação Musical Portuguesa identity project",
   },
 ];
 
-/* PLACEHOLDER: real quotes from real people, with permission, or delete the
- * section entirely. Fabricated testimonials are worse than none. */
-export const testimonials = [
-  {
-    quote:
-      "Miguel found in a week the problem we had argued about for a year. The rebuild shipped on time.",
-    name: "Inês Craveiro",
-    role: "Head of Product",
-    company: "Ledgerline",
-  },
-  {
-    quote:
-      "He works like part of the team, not like an agency. Our engineers stopped guessing because the handover actually answered their questions.",
-    name: "Tomás Bandeira",
-    role: "Engineering Lead",
-    company: "Atlas Freight",
-  },
-  {
-    quote:
-      "The audit was blunt in the best way. We knew exactly what to fix first and what could wait two quarters.",
-    name: "Marta Vilhena",
-    role: "Founder",
-    company: "Northbeam Health",
-  },
-] as const;
-
-/* PLACEHOLDER: replace with real clients. `icon` is a simple-icons slug when a
- * real brand mark exists, otherwise the site renders a monogram. */
+/* Real organisations, at the level of detail the CV states. */
 export const clients = [
-  { name: "Ledgerline", icon: null },
-  { name: "Northbeam Health", icon: null },
-  { name: "Atlas Freight", icon: null },
-  { name: "Cadence", icon: null },
-  { name: "Truveo", icon: null },
-  { name: "Halden", icon: null },
+  { name: "BMW", icon: "bmw" },
+  { name: "Critical Techworks", icon: null },
+  { name: "Decode", icon: null },
+  { name: "Confederação Musical Portuguesa", icon: null },
 ] as const;
 
 /* --------------------------------------------------------------------------
  * ABOUT
- * PLACEHOLDER: this whole section needs to come off the CV.
  * ------------------------------------------------------------------------*/
 export const about = {
   headline: "I design software that respects the person using it",
   intro: [
-    "I have spent nine years designing products where the work is genuinely complicated: finance tools, clinical software, logistics platforms. The kind of product where the user is an expert under time pressure, and a confusing screen has a real cost.",
-    "That work taught me that most interface problems are not visual. They are decisions nobody made: which state matters, what happens when the data is missing, who this screen is really for. I spend most of a project making those decisions explicit, and the rest making them look effortless.",
-    "I work directly with founders and product teams, usually as the only designer in the room. That means writing as much as drawing, and staying close to engineering until the thing is live.",
+    "I am a product designer in Lisbon. For the past few years I have worked on software used inside BMW manufacturing plants, translating industrial workflows that are genuinely complicated into interfaces people can use while doing something else.",
+    "Before that I spent two years at an agency designing mobile and web products across e-commerce, security, SaaS and healthcare. Different sectors, same underlying problem: someone has to decide what matters on the screen, and most of the time nobody had.",
+    "That is where I spend most of a project. Which state matters, what happens when the data is missing, who this screen is really for. I work these out with engineers and the people who use the product rather than alone in a file, then make the result look effortless.",
   ],
   portrait: "/about/portrait.jpg",
   portraitAlt: "Portrait of Miguel Pedroso",
 
   experience: [
     {
-      period: "2022 - now",
-      role: "Independent Product Designer",
-      org: "Freelance",
-      note: "Product design, UX audits and design systems for software teams across Europe.",
+      period: "2023 - now",
+      role: "UX Designer",
+      org: "Critical Techworks",
+      note: "UX for digital products used across BMW manufacturing plants. Discovery, end-to-end flows and validation through prototyping and testing, plus internal work on a SharePoint redesign and a UX onboarding programme.",
     },
     {
-      period: "2019 - 2022",
-      role: "Senior Product Designer",
-      org: "PLACEHOLDER Company",
-      note: "Owned design for the core platform and built the first shared component library.",
+      period: "2021 - 2023",
+      role: "UX/UI Designer and Webflow Developer",
+      org: "Decode",
+      note: "Mobile and web products across e-commerce, security, SaaS and healthcare. Led discovery sessions and produced flows, wireframes, prototypes and high-fidelity design for several teams.",
     },
     {
-      period: "2017 - 2019",
-      role: "Product Designer",
-      org: "PLACEHOLDER Company",
-      note: "Designed customer-facing web and mobile features from research through to release.",
+      period: "2020",
+      role: "Visual Designer",
+      org: "Confederação Musical Portuguesa",
+      note: "Freelance project defining the brand identity and the organisation's first set of social media assets and digital presence.",
+    },
+  ],
+
+  education: [
+    {
+      period: "2026",
+      title: "UX Certificate",
+      org: "Nielsen Norman Group, Lisbon",
+    },
+    {
+      period: "2015 - 2019",
+      title: "Degree in Multimedia Engineering",
+      org: "ISTEC, Lisbon",
+    },
+    {
+      period: "2015",
+      title: "CTeSP, Development of Multimedia Products",
+      org: "ISTEC, Lisbon",
     },
   ],
 
   capabilities: [
-    "Product design",
-    "UX research",
-    "Usability testing",
-    "Information architecture",
-    "Interaction design",
+    "Product discovery",
+    "End-to-end product design",
+    "Prototyping complex flows",
     "Design systems",
-    "Prototyping",
-    "Design to code handover",
+    "Design for iOS and Web",
+    "Design thinking",
+    "Collaboration with engineering",
+    "UI design and visual craft",
+    "Usability testing",
   ],
 
-  tools: ["Figma", "Framer", "Notion", "Linear", "Maze", "HTML and CSS"],
+  tools: ["Figma", "FigJam", "Adobe Creative Cloud", "Webflow"],
+
+  languages: [
+    { name: "Portuguese", level: "Native" },
+    { name: "English", level: "B2" },
+  ],
 
   principles: [
     {
@@ -507,8 +372,8 @@ export const about = {
       body: "Empty, loading, error and permission states are not edge cases. They are most of the product.",
     },
     {
-      title: "Ship it, then judge it",
-      body: "Nothing is proven in a Figma file. I stay involved until the work is in front of real users.",
+      title: "Stay close to the build",
+      body: "Nothing is proven in a Figma file. I work with engineers until the thing is in front of real users.",
     },
   ],
 } as const;
@@ -517,19 +382,27 @@ export const about = {
  * CONTACT
  * ------------------------------------------------------------------------*/
 export const contact = {
-  headline: "Tell me what you are building",
+  headline: "Tell me what you are working on",
   subhead:
-    "The more detail you send, the more useful my first reply will be. I answer every message within two working days.",
+    "A role, a project, or a problem you are not sure how to frame yet. The more detail you send, the more useful my first reply will be.",
   expectations: [
-    { title: "A reply within two working days", body: "Including a straight no if I am not the right fit." },
-    { title: "A 30 minute call", body: "No deck. We talk about the product and what is actually in the way." },
-    { title: "A written scope and price", body: "Fixed timeline, fixed cost, sent before any work starts." },
+    {
+      title: "A reply within a few days",
+      body: "Including a straight no if I am not the right fit.",
+    },
+    {
+      title: "A conversation, not a pitch",
+      body: "We talk about the product and what is actually in the way.",
+    },
+    {
+      title: "A clear next step",
+      body: "Whether that is a call, a portfolio walkthrough or an introduction elsewhere.",
+    },
   ],
-  budgets: [
-    "Under 5k",
-    "5k to 15k",
-    "15k to 40k",
-    "Over 40k",
-    "Not sure yet",
+  reasons: [
+    "A full-time role",
+    "A project or contract",
+    "A portfolio walkthrough",
+    "Something else",
   ],
 } as const;

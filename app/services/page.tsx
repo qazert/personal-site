@@ -8,7 +8,7 @@ import { services } from "@/content/site";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "End-to-end product design, UX audits and redesigns, design systems, and ongoing design partnership. Fixed scope, fixed price.",
+    "Product discovery, end-to-end product design, complex flows and design systems, for Web and iOS.",
 };
 
 export default function ServicesPage() {
@@ -31,22 +31,9 @@ export default function ServicesPage() {
                   {offer.summary}
                 </p>
 
-                <dl className="mt-6 grid gap-4 border-t border-line pt-5 sm:grid-cols-2">
-                  <div>
-                    <dt className="text-[0.8125rem] text-faint">Timeline</dt>
-                    <dd className="mt-1 text-[0.9375rem] font-medium">
-                      {offer.timeline}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[0.8125rem] text-faint">Best for</dt>
-                    <dd className="mt-1 max-w-[34ch] text-[0.9375rem] font-medium">
-                      {offer.bestFor}
-                    </dd>
-                  </div>
-                </dl>
-
-                <p className="mt-7 text-[0.8125rem] text-faint">Includes</p>
+                <p className="mt-6 border-t border-line pt-5 text-[0.8125rem] text-faint">
+                  Includes
+                </p>
                 <ul className="mt-3 grid gap-2.5">
                   {offer.includes.map((line) => (
                     <li key={line} className="flex gap-3">
@@ -96,8 +83,8 @@ export default function ServicesPage() {
 
       <div className="pt-20 md:pt-28">
         <CtaBand
-          heading="Not sure which one you need?"
-          body="Describe the problem in a couple of sentences and I will tell you which engagement fits, or that none of them do."
+          heading="Sounds like what your team needs?"
+          body="Tell me what you are working on and where it is stuck. I will tell you honestly whether I am the right person for it."
         />
       </div>
     </>

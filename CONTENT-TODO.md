@@ -1,68 +1,62 @@
-# Content still to replace
+# Content status
 
-The CV attached to the build request could not be reached from the build
-environment, and miguelpedroso.com is blocked by the network policy here. So the
-structure, design and behaviour of this site are real, and a number of the facts
-in it are not.
+The site is now written from the CV (July 2026). Names, dates, roles, projects,
+skills, tools, education and contact details are real. Nothing on the site
+claims something the CV does not support.
 
-Everything below lives in `content/site.ts`. Nothing else needs editing.
+Everything lives in `content/site.ts`. Nothing else needs editing to change copy.
 
-## Must replace before the site goes live
+## The one thing that is not real: imagery
 
-**Case studies** (`caseStudies`) - all four are fictional. Ledgerline,
-Northbeam Health, Atlas Freight and Cadence are invented companies with
-invented problems, invented approaches and invented outcomes. Replace client
-names, titles, summaries, the problem and approach narrative, and every number
-in `outcomes`. Each entry carries `placeholder: true` so they are easy to find.
-
-**Testimonials** (`testimonials`) - three invented quotes attributed to three
-invented people. Use real quotes from real clients with their permission, or
-delete the section. Fabricated testimonials are worse than no testimonials, and
-this site is aimed at companies evaluating whether to trust you.
-
-**Client list** (`clients`) - six invented names rendered as monogram lockups.
-Replace with real clients. If a client has a mark in
-[Simple Icons](https://simpleicons.org), set its slug on `icon` and the real
-logo renders instead of the monogram.
-
-**Proof numbers** (`home.proof.stats`) - "9 years", "30+", "4" are guesses.
-
-**Employment history** (`about.experience`) - the two pre-2022 rows say
-"PLACEHOLDER Company". The dates and the notes are guesses too.
-
-**Contact details** (`site.email`, `site.socials`) - `hello@miguelpedroso.com`
-and the three profile URLs are assumed, not verified.
-
-**Location** (`site.location`) - assumed to be Lisbon.
-
-## Worth reviewing, not necessarily wrong
-
-- `home.headline` and `home.subhead` - the site's central promise. Written to be
-  specific and short. Change it if it does not match how you sell.
-- `services.offerings` - four engagements with timelines and scope. The shapes
-  are conventional for independent product design; the specifics should match
-  what you actually offer.
-- `about.intro` - written around "complex software for expert users under time
-  pressure". If your positioning is different, this is the paragraph to rewrite.
-- `home.faq` - answers commit you to a two working day reply, fixed pricing and
-  no hourly billing. Make sure you are happy being held to that.
-
-## Images
-
-`public/` currently holds 17 generated placeholder plates: soft graphite and
-paper gradients in the brand palette. They are there so the layout, aspect
-ratios and loading behaviour are real, not because they are good.
-
-Replace each file at the same path and roughly the same dimensions:
+`public/` holds generated placeholder plates, soft graphite and paper gradients
+in the brand palette. They exist so layout and loading behaviour are real, not
+because they are good. Replace each at the same path:
 
 | Path | Size | What it should be |
 | --- | --- | --- |
-| `home/hero.jpg` | 1600x1400 | Hero visual. Work, workspace or portrait. |
-| `home/system.jpg` | 1400x1000 | Supports the first benefit tile. |
-| `home/craft.jpg` | 1200x900 | Currently unused. Delete or use it. |
-| `work/<slug>-cover.jpg` | 1760x1100 | Case study cover, 16:10. |
-| `work/<slug>-01.jpg`, `-02.jpg` | 1680x1120 | Case study detail shots, 3:2. |
-| `about/portrait.jpg` | 1200x1500 | Portrait, 4:5. |
-| `og.jpg` | 1200x630 | Social sharing card. |
+| `work/part-exchange.jpg` | 1760x1100 | Part-exchange workflows, Web and iOS |
+| `work/incident-reporting.jpg` | 1760x1100 | Incident reporting tool |
+| `work/assembly-line.jpg` | 1760x1100 | Assembly-line navigation |
+| `work/supply-chain.jpg` | 1760x1100 | Supply chain visibility |
+| `work/nutrition.jpg` | 1760x1100 | Nutrition brand redesign |
+| `work/confederacao.jpg` | 1760x1100 | Confederação Musical Portuguesa identity |
+| `home/hero.jpg` | 1600x1400 | Hero visual |
+| `home/system.jpg` | 1400x1000 | Supports the first benefit tile |
+| `about/portrait.jpg` | 1200x1500 | Portrait, 4:5 |
+| `og.jpg` | 1200x630 | Social sharing card |
 
-`npm run images` regenerates the placeholders if you need them again.
+`home/craft.jpg` is generated but unused. Delete it or find it a home.
+
+`npm run images` regenerates the placeholders.
+
+## Worth a second read before publishing
+
+**Confidentiality.** The work grid names BMW, Critical Techworks, Decode and
+Confederação Musical Portuguesa, and describes each project only to the depth
+the CV already does. If your agreement with Critical Techworks is stricter than
+your own CV, tighten `workItems` in `content/site.ts`.
+
+**"5 years designing digital products"** in `home.proof.stats` counts from the
+2020 Confederação Musical Portuguesa project. Change it if you would rather
+count from Decode in 2021.
+
+**"10% increase in adoption"** is from the CV, attached to the part-exchange
+flow. It is the only hard number on the site, so make sure you are happy
+standing behind it in an interview.
+
+**The FAQ** says you are open to both a full-time role and project work. If you
+settle on one, tighten that answer and the hero subhead with it.
+
+**`home.availability`** currently reads "Working on industrial software at
+Critical Techworks". It is a status line, not an availability signal. Change or
+remove it if your situation changes.
+
+**Testimonials are gone.** The earlier draft invented three. There are none now
+because there are no real ones. If you collect quotes from colleagues at
+Critical Techworks or Decode, that section is worth rebuilding.
+
+## Not built
+
+No case study detail pages. The work section is a grid of six, as agreed. If you
+later write up individual projects, `WorkCard` will need to become a link again
+and a `/works/[slug]` route added back.

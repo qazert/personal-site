@@ -1,9 +1,9 @@
 import { Reveal } from "@/components/ui/Reveal";
-import { home, testimonials } from "@/content/site";
+import { home } from "@/content/site";
 
 /**
- * Proof without card boxes: numbers set in display type, quotes separated by
- * hairlines. Nothing here needs elevation, so nothing gets it.
+ * Proof without card boxes: numbers set in display type, sectors as a plain
+ * list. Nothing here needs elevation, so nothing gets it.
  */
 export function Proof() {
   return (
@@ -24,7 +24,7 @@ export function Proof() {
                   <span className="display-sm tnum block text-[2.25rem] md:text-[3rem]">
                     {stat.value}
                   </span>
-                  <span className="lede mt-2 block max-w-[22ch] text-[0.9375rem]">
+                  <span className="lede mt-2 block max-w-[26ch] text-[0.9375rem]">
                     {stat.label}
                   </span>
                 </dd>
@@ -33,26 +33,24 @@ export function Proof() {
           ))}
         </dl>
 
-        <div className="mt-16 grid gap-10 border-t border-line pt-12 md:mt-20 md:gap-8 lg:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <Reveal key={t.name} index={i}>
-              <figure
-                className={
-                  i > 0 ? "lg:border-l lg:border-line lg:pl-8" : undefined
-                }
-              >
-                <blockquote className="max-w-[38ch] text-[1.0625rem] leading-[1.55] tracking-[-0.014em] md:text-lg">
-                  &ldquo;{t.quote}&rdquo;
-                </blockquote>
-                <figcaption className="mt-5 text-[0.875rem]">
-                  <span className="font-medium">{t.name}</span>
-                  <span className="lede block text-[0.8125rem]">
-                    {t.role}, {t.company}
-                  </span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
+        <div className="mt-16 grid gap-6 border-t border-line pt-12 md:mt-20 md:grid-cols-[0.8fr_1.2fr] md:gap-12">
+          <Reveal>
+            <h3 className="text-[1.375rem] font-medium tracking-[-0.026em] md:text-2xl">
+              {home.proof.sectors.heading}
+            </h3>
+          </Reveal>
+          <Reveal index={1}>
+            <ul className="flex flex-wrap gap-2">
+              {home.proof.sectors.items.map((sector) => (
+                <li
+                  key={sector}
+                  className="rounded-pill border border-line-strong px-3.5 py-1.5 text-[0.875rem] text-muted"
+                >
+                  {sector}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </div>
     </section>

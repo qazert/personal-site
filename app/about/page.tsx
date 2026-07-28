@@ -8,7 +8,7 @@ import { about, site } from "@/content/site";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Nine years designing software where the work is genuinely complicated: finance, clinical and logistics products.",
+    "Product designer in Lisbon. UX for software used across BMW manufacturing plants, and agency work before that.",
 };
 
 export default function AboutPage() {
@@ -103,6 +103,38 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <section className="border-t border-line bg-surface/60">
+        <div className="shell py-20 md:py-28">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+            <Reveal>
+              <h2 className="display-sm max-w-[10ch] text-[2rem] md:text-[2.75rem]">
+                Education
+              </h2>
+            </Reveal>
+
+            <ol className="border-t border-line">
+              {about.education.map((item, i) => (
+                <Reveal key={item.title} index={i} as="li">
+                  <div className="grid gap-2 border-b border-line py-6 sm:grid-cols-[9rem_1fr] sm:gap-6">
+                    <p className="tnum text-[0.875rem] text-faint">
+                      {item.period}
+                    </p>
+                    <div>
+                      <h3 className="text-[1.0625rem] font-medium tracking-[-0.018em] md:text-lg">
+                        {item.title}
+                      </h3>
+                      <p className="mt-0.5 text-[0.9375rem] text-muted">
+                        {item.org}
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-line">
         <div className="shell py-20 md:py-28">
           <div className="grid gap-12 md:grid-cols-2 md:gap-16">
@@ -139,9 +171,22 @@ export default function AboutPage() {
                     </li>
                   ))}
                 </ul>
+                <h2 className="mt-10 text-[1.375rem] font-medium tracking-[-0.026em] md:text-2xl">
+                  Languages
+                </h2>
+                <ul className="mt-6 flex flex-wrap gap-2">
+                  {about.languages.map((l) => (
+                    <li
+                      key={l.name}
+                      className="rounded-pill border border-line-strong px-3.5 py-1.5 text-[0.875rem] text-muted"
+                    >
+                      {l.name}, {l.level}
+                    </li>
+                  ))}
+                </ul>
                 <p className="lede mt-8 max-w-[44ch] text-[0.9375rem]">
-                  Based in {site.location}, working with teams across Europe and
-                  in North American time zones.
+                  Based in {site.location}, comfortable with distributed teams
+                  across European time zones.
                 </p>
               </div>
             </Reveal>

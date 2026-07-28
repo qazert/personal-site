@@ -3,8 +3,8 @@
 Portfolio site for Miguel Pedroso, product designer. Next.js App Router,
 Tailwind v4, self-hosted Inter, Motion for interaction.
 
-> **Before publishing, read [CONTENT-TODO.md](./CONTENT-TODO.md).** The site
-> currently ships with placeholder case studies, testimonials and imagery.
+> Copy is written from the CV and is real. Imagery is still placeholder.
+> See [CONTENT-TODO.md](./CONTENT-TODO.md).
 
 ## Running it
 
@@ -20,7 +20,7 @@ npm run lint
 | Path | What |
 | --- | --- |
 | `content/site.ts` | Every word on the site. Copy changes happen here and nowhere else. |
-| `app/` | Routes: home, `/services`, `/works`, `/works/[slug]`, `/about`, `/contact`. |
+| `app/` | Routes: home, `/services`, `/works`, `/about`, `/contact`. |
 | `components/site/` | Header, footer, page header, CTA band. |
 | `components/ui/` | Button, scroll reveal, accordion, client mark. |
 | `app/globals.css` | Design tokens: colour, radius, elevation, type utilities. |

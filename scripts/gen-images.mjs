@@ -118,21 +118,13 @@ const jobs = [
   { file: "home/system.jpg", w: 1400, h: 1000, palette: "slate" },
   { file: "home/craft.jpg", w: 1200, h: 900, palette: "bone" },
 
-  // Work covers, 16:10
-  { file: "work/ledgerline-cover.jpg", w: 1760, h: 1100, palette: "graphite" },
-  { file: "work/northbeam-cover.jpg", w: 1760, h: 1100, palette: "bone" },
-  { file: "work/atlas-cover.jpg", w: 1760, h: 1100, palette: "slate" },
-  { file: "work/cadence-cover.jpg", w: 1760, h: 1100, palette: "ink" },
-
-  // Work galleries, 3:2
-  { file: "work/ledgerline-01.jpg", w: 1680, h: 1120, palette: "ink" },
-  { file: "work/ledgerline-02.jpg", w: 1680, h: 1120, palette: "paper" },
-  { file: "work/northbeam-01.jpg", w: 1680, h: 1120, palette: "paper" },
-  { file: "work/northbeam-02.jpg", w: 1680, h: 1120, palette: "graphite" },
-  { file: "work/atlas-01.jpg", w: 1680, h: 1120, palette: "ink" },
-  { file: "work/atlas-02.jpg", w: 1680, h: 1120, palette: "slate" },
-  { file: "work/cadence-01.jpg", w: 1680, h: 1120, palette: "bone" },
-  { file: "work/cadence-02.jpg", w: 1680, h: 1120, palette: "graphite" },
+  // Work grid covers, 16:10. Filenames match content/site.ts workItems.
+  { file: "work/part-exchange.jpg", w: 1760, h: 1100, palette: "graphite" },
+  { file: "work/incident-reporting.jpg", w: 1760, h: 1100, palette: "ink" },
+  { file: "work/assembly-line.jpg", w: 1760, h: 1100, palette: "slate" },
+  { file: "work/supply-chain.jpg", w: 1760, h: 1100, palette: "bone" },
+  { file: "work/nutrition.jpg", w: 1760, h: 1100, palette: "paper" },
+  { file: "work/confederacao.jpg", w: 1760, h: 1100, palette: "graphite" },
 
   // About, 4:5 portrait
   { file: "about/portrait.jpg", w: 1200, h: 1500, palette: "ink", strength: 0.2 },

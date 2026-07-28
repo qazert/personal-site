@@ -16,8 +16,8 @@ export default function HomePage() {
       <Proof />
       <Faq />
       <CtaBand
-        heading="Have a product that has outgrown its interface?"
-        body="Send me what you are working on. If I am not the right fit, I will say so and point you somewhere better."
+        heading="Have something complex that needs designing?"
+        body="Send me what you are working on, whether that is a role, a product or a problem you cannot frame yet."
       />
     </>
   );

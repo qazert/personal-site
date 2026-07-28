@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         name,
         email,
         company: String(payload.company ?? "").trim(),
-        budget: String(payload.budget ?? "").trim(),
+        reason: String(payload.reason ?? "").trim(),
         message,
         receivedAt: new Date().toISOString(),
       }),

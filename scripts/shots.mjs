@@ -15,7 +15,6 @@ const ROUTES = [
   ["home", "/"],
   ["services", "/services"],
   ["works", "/works"],
-  ["work-detail", "/works/ledgerline"],
   ["about", "/about"],
   ["contact", "/contact"],
   ["not-found", "/this-page-is-missing"],

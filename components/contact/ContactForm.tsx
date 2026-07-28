@@ -98,7 +98,7 @@ export function ContactForm() {
           Message sent
         </h2>
         <p className="lede mt-2 max-w-[42ch] text-[0.9375rem]">
-          Thank you. I read everything myself and reply within two working days,
+          Thank you. I read everything myself and reply within a few days,
           including if the answer is no.
         </p>
         <button
@@ -174,19 +174,19 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="budget" className={labelCls}>
-            Budget
+          <label htmlFor="reason" className={labelCls}>
+            What is this about?
           </label>
           <div className="relative mt-2">
             <select
-              id="budget"
-              name="budget"
-              defaultValue={contact.budgets[contact.budgets.length - 1]}
+              id="reason"
+              name="reason"
+              defaultValue={contact.reasons[0]}
               className={`${field} appearance-none pr-11`}
             >
-              {contact.budgets.map((b) => (
-                <option key={b} value={b}>
-                  {b}
+              {contact.reasons.map((r) => (
+                <option key={r} value={r}>
+                  {r}
                 </option>
               ))}
             </select>
@@ -196,7 +196,7 @@ export function ContactForm() {
               className="pointer-events-none absolute right-4 top-1/2 size-3.5 -translate-y-1/2 text-muted"
             />
           </div>
-          <p className={helpCls}>A range is enough. It shapes the scope.</p>
+          <p className={helpCls}>A rough steer is enough.</p>
         </div>
       </div>
 
@@ -219,7 +219,7 @@ export function ContactForm() {
           </p>
         ) : (
           <p id="message-help" className={helpCls}>
-            The product, what is not working, and when you need it done.
+            The product, the team, and what is currently in the way.
           </p>
         )}
       </div>
@@ -269,7 +269,7 @@ export function ContactForm() {
           )}
         </Button>
         <p className="text-[0.8125rem] text-muted">
-          Replies within two working days.
+          I reply to everything.
         </p>
       </div>
     </form>

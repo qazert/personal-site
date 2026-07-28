@@ -50,24 +50,35 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
-/* FAQ accordion */
+/* FAQ accordion. Selected structurally so copy changes do not break the test. */
 {
   const page = await (
     await browser.newContext({ viewport: { width: 1280, height: 800 } })
   ).newPage();
   await page.goto(BASE, { waitUntil: "networkidle" });
-  const second = page.getByRole("button", { name: "How long does a project take?" });
+
+  const panels = page.locator("h3 > button[aria-expanded]");
+  const count = await panels.count();
+  check("FAQ renders its questions", count >= 3, `${count} found`);
+
+  const first = panels.nth(0);
+  const second = panels.nth(1);
   await second.scrollIntoViewIfNeeded();
+
+  check("first FAQ starts open", (await first.getAttribute("aria-expanded")) === "true");
   check("second FAQ starts collapsed", (await second.getAttribute("aria-expanded")) === "false");
+
   await second.click();
   await page.waitForTimeout(500);
   check("FAQ expands on click", (await second.getAttribute("aria-expanded")) === "true");
   check(
-    "opening one FAQ closes the first",
-    (await page
-      .getByRole("button", { name: "How does a project usually start?" })
-      .getAttribute("aria-expanded")) === "false",
+    "opening one FAQ closes the other",
+    (await first.getAttribute("aria-expanded")) === "false",
   );
+
+  await second.click();
+  await page.waitForTimeout(500);
+  check("clicking again collapses it", (await second.getAttribute("aria-expanded")) === "false");
   await page.close();
 }
 
