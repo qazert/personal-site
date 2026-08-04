@@ -20,9 +20,9 @@ npm run lint
 | Path | What |
 | --- | --- |
 | `content/site.ts` | Every word on the site. Copy changes happen here and nowhere else. |
-| `app/` | Routes: home, `/services`, `/works`, `/about`, `/contact`. |
+| `app/` | Routes: home, `/projects`, `/services`, `/about`, `/contact`. |
 | `components/site/` | Header, footer, page header, CTA band. |
-| `components/ui/` | Button, scroll reveal, accordion, client mark. |
+| `components/ui/` | Button and the scroll reveal wrapper. |
 | `app/globals.css` | Design tokens: colour, radius, elevation, type utilities. |
 | `public/` | Images. Placeholder plates until real exports land. |
 
@@ -31,9 +31,13 @@ npm run lint
 Defined once in `app/globals.css` as CSS variables, exposed to Tailwind through
 `@theme inline`.
 
-- **Colour** `#101010` ink, `#F1F1F1` paper, `#5B23FF` accent. The accent has a
-  darker variant for text on light backgrounds and a lighter one for dark, so
-  every use clears WCAG AA. Do not use raw `#5B23FF` for body text.
+- **Colour** `#101010` ink on `#F1F1F1` paper. The accent is the ink itself and
+  inverts in dark mode, so a filled control is always maximum contrast against
+  the page. `--danger` is separate and semantic: errors must not read as accent.
+- **Glass** the floating navigation uses `.glass`: a blur plus saturation, a
+  bright top edge and a soft inner floor. A web approximation of a refractive
+  material, not a port of any native effect. It falls back to a solid panel
+  under `prefers-reduced-transparency` and where `backdrop-filter` is missing.
 - **Radius** one scale, one rule: buttons and tags are pills, inputs `12px`,
   cards `16px`, media panels `24px`.
 - **Theme** light and dark are both first class. `data-theme` is set on `<html>`
@@ -61,7 +65,8 @@ error state with a mailto fallback. It never pretends a message was delivered.
 ```bash
 npm run images       # regenerate the placeholder plates in /public
 npm run shots        # screenshot every page, audit for layout defects
-npm run interactions # drive theme toggle, mobile menu, accordion, contact form
+npm run interactions # drive theme toggle, mobile menu, project stack, contact form
+npm run preview      # build a single-file, self-contained clickable preview
 ```
 
 `npm run shots` walks every route at 1440px and 390px in both themes and reports

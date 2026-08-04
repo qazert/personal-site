@@ -23,7 +23,7 @@ export function Hero() {
   });
 
   return (
-    <section className="shell pb-16 pt-10 md:pb-24 md:pt-16 lg:pt-20">
+    <section className="shell pb-16 pt-6 md:pb-24 md:pt-10">
       {/* The text column is deliberately wide: the headline has to hold two
           lines at every desktop width, not three. */}
       <div className="grid items-center gap-10 lg:grid-cols-[1.32fr_0.68fr] lg:gap-14 xl:gap-16">

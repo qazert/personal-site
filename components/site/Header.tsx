@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { List, MoonStars, Sun, X } from "@phosphor-icons/react";
-import { nav, site, cta } from "@/content/site";
+import { nav, site } from "@/content/site";
 import { Button } from "@/components/ui/Button";
 
 /* The theme lives on <html>, written by ThemeScript before first paint. This
@@ -39,16 +39,16 @@ function ThemeToggle({ className = "" }: { className?: string }) {
       aria-label={
         theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
       }
-      className={`grid size-10 shrink-0 place-items-center rounded-pill text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-text ${className}`}
+      className={`grid size-10 shrink-0 place-items-center rounded-pill text-muted md:size-9 transition-colors duration-200 hover:bg-accent-soft hover:text-text ${className}`}
     >
       {/* Renders nothing until the client knows the real theme, which keeps
           the icon from contradicting the page on first paint. */}
       {theme === "dark" ? (
-        <Sun weight="regular" className="size-[1.15rem]" />
+        <Sun weight="regular" className="size-[1.05rem]" />
       ) : theme === "light" ? (
-        <MoonStars weight="regular" className="size-[1.15rem]" />
+        <MoonStars weight="regular" className="size-[1.05rem]" />
       ) : (
-        <span className="size-[1.15rem]" />
+        <span className="size-[1.05rem]" />
       )}
     </button>
   );
@@ -56,7 +56,6 @@ function ThemeToggle({ className = "" }: { className?: string }) {
 
 export function Header() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
 
   /* The menu is open only while the route it was opened on is still current, so
@@ -67,23 +66,6 @@ export function Header() {
     (next: boolean) => setOpenedOn(next ? pathname : null),
     [pathname],
   );
-
-  // State transition: the bar earns a surface once content sits behind it.
-  useEffect(() => {
-    const sentinel = document.createElement("div");
-    sentinel.style.cssText =
-      "position:absolute;top:0;left:0;height:1px;width:1px;pointer-events:none";
-    document.body.appendChild(sentinel);
-    const io = new IntersectionObserver(
-      ([entry]) => setScrolled(!entry.isIntersecting),
-      { threshold: 0 },
-    );
-    io.observe(sentinel);
-    return () => {
-      io.disconnect();
-      sentinel.remove();
-    };
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -96,71 +78,79 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header
-      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
-        scrolled
-          ? "border-line bg-bg/85 backdrop-blur-xl"
-          : "border-transparent bg-transparent"
-      }`}
-    >
-      <div className="shell flex h-17 items-center justify-between gap-6">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:pt-5">
+      {/* Three columns so the bar is optically centred regardless of the
+          wordmark's width. */}
+      <div className="mx-auto grid max-w-[1240px] grid-cols-[1fr_auto_1fr] items-center gap-4 max-md:grid-cols-1">
         <Link
           href="/"
-          className="-ml-1 inline-flex h-10 items-center rounded-sm px-1 text-[0.9375rem] font-semibold tracking-[-0.02em] text-text"
+          className="pointer-events-auto hidden justify-self-start rounded-sm px-1 text-[0.9375rem] font-semibold tracking-[-0.02em] text-text lg:inline-flex lg:h-11 lg:items-center"
         >
           {site.name}
         </Link>
 
+        {/* Floating glass bar. Sits over the page rather than pushing it down,
+            so what scrolls underneath stays partly visible through it. */}
         <nav
           aria-label="Main"
-          className="hidden items-center gap-1 md:flex"
+          className="glass pointer-events-auto col-start-2 hidden justify-self-center rounded-pill p-1 md:flex md:items-center md:gap-0.5"
         >
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(item.href) ? "page" : undefined}
-              className={`rounded-pill px-3 py-2 text-[0.9375rem] tracking-[-0.011em] transition-colors duration-200 ${
-                isActive(item.href)
-                  ? "text-text"
-                  : "text-muted hover:text-text"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`rounded-pill px-4 py-2 text-[0.9375rem] tracking-[-0.011em] transition-colors duration-200 ${
+                  active
+                    ? "bg-accent text-accent-fg"
+                    : "text-muted hover:text-text"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <span className="mx-1 h-5 w-px bg-line" aria-hidden />
+          <ThemeToggle />
         </nav>
 
-        <div className="flex items-center gap-1.5">
-          <ThemeToggle />
-          {/* Wrapped rather than given a `hidden` utility: `hidden` and
-              `inline-flex` are the same Tailwind display group, so the override
-              would depend on stylesheet order. */}
-          <span className="hidden md:block">
-            <Button href={cta.primary.href}>{cta.primary.label}</Button>
-          </span>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-            aria-expanded={open}
-            className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-surface-2 md:hidden"
+        {/* Mobile: the same material, holding the wordmark and the controls. */}
+        <div className="glass pointer-events-auto flex w-full items-center justify-between gap-2 rounded-pill py-1 pl-4 pr-1 md:hidden">
+          <Link
+            href="/"
+            className="inline-flex min-h-10 items-center rounded-sm text-[0.9375rem] font-semibold tracking-[-0.02em] text-text"
           >
-            <List weight="regular" className="size-5" />
-          </button>
+            {site.name}
+          </Link>
+          <div className="flex items-center gap-0.5">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={open}
+              className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-accent-soft"
+            >
+              <List weight="regular" className="size-5" />
+            </button>
+          </div>
         </div>
+
+        <div aria-hidden className="hidden lg:block" />
       </div>
 
       <AnimatePresence>
         {open ? (
           <motion.div
-            className="fixed inset-0 z-50 bg-bg md:hidden"
+            className="pointer-events-auto fixed inset-0 z-50 bg-bg md:hidden"
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduce ? undefined : { opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="shell flex h-17 items-center justify-between">
+            <div className="flex h-16 items-center justify-between px-6">
               <span className="text-[0.9375rem] font-semibold tracking-[-0.02em]">
                 {site.name}
               </span>
@@ -168,13 +158,13 @@ export function Header() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-surface-2"
+                className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-accent-soft"
               >
                 <X weight="regular" className="size-5" />
               </button>
             </div>
 
-            <div className="shell flex flex-col pt-6">
+            <div className="flex flex-col px-6 pt-6">
               <nav aria-label="Mobile" className="flex flex-col">
                 {nav.map((item, i) => (
                   <motion.div
@@ -197,12 +187,12 @@ export function Header() {
                 ))}
               </nav>
               <Button
-                href={cta.primary.href}
+                href="/contact"
                 size="lg"
                 className="mt-8 w-full"
                 withArrow
               >
-                {cta.primary.label}
+                Get in touch
               </Button>
             </div>
           </motion.div>

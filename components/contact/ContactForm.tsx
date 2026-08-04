@@ -21,7 +21,7 @@ const field =
 
 const labelCls = "block text-[0.875rem] font-medium text-text";
 const helpCls = "mt-1.5 text-[0.8125rem] text-muted";
-const errCls = "mt-1.5 flex items-center gap-1.5 text-[0.8125rem] text-accent-text";
+const errCls = "mt-1.5 flex items-center gap-1.5 text-[0.8125rem] text-danger";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -92,7 +92,7 @@ export function ContactForm() {
         <CheckCircle
           weight="regular"
           aria-hidden
-          className="size-8 text-accent-text"
+          className="size-8 text-text"
         />
         <h2 className="mt-4 text-xl font-medium tracking-[-0.024em]">
           Message sent
@@ -234,11 +234,11 @@ export function ContactForm() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden text-[0.875rem] text-text"
           >
-            <span className="block rounded-sm border border-accent/30 bg-accent-soft px-4 py-3">
+            <span className="block rounded-sm border border-danger/40 bg-danger/8 px-4 py-3">
               {failure} You can email me directly at{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="font-medium text-accent-text underline underline-offset-4"
+                className="font-medium underline underline-offset-4"
               >
                 {site.email}
               </a>

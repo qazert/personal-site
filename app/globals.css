@@ -13,7 +13,6 @@
   /* Brand */
   --brand-ink: #101010;
   --brand-paper: #f1f1f1;
-  --brand-accent: #5b23ff;
 
   /* Surfaces */
   --bg: #f1f1f1;
@@ -31,11 +30,26 @@
   --line: rgb(16 16 16 / 0.1);
   --line-strong: rgb(16 16 16 / 0.18);
 
-  /* Accent, tuned per mode so text always clears WCAG AA. */
-  --accent: #5b23ff;
-  --accent-text: #4b18e0;
-  --accent-soft: rgb(91 35 255 / 0.08);
-  --accent-fg: #ffffff; /* 6.7:1 on --accent */
+  /* The accent is the ink itself. It inverts in dark mode so a filled control
+     is always maximum contrast against the page. */
+  --accent: #101010;
+  --accent-text: #101010;
+  --accent-soft: rgb(16 16 16 / 0.06);
+  --accent-fg: #ffffff;
+
+  /* Semantic, deliberately not the accent: errors have to read as errors. */
+  --danger: #a4232a;
+
+  /* Frosted glass for the floating navigation. A web approximation of a
+     refractive material: blur plus saturation, a bright top edge, and a soft
+     inner floor. Not a port of any single native effect. */
+  --glass-bg: rgb(255 255 255 / 0.5);
+  --glass-border: rgb(255 255 255 / 0.7);
+  --glass-blur: 20px;
+  --glass-highlight: rgb(255 255 255 / 0.8);
+  --glass-floor: rgb(255 255 255 / 0.2);
+  --glass-shadow: 0 10px 34px rgb(16 16 16 / 0.1), 0 2px 6px rgb(16 16 16 / 0.06);
+  --glass-solid: rgb(248 248 248 / 0.97);
 
   /* Radius scale.
      Rule: buttons + tags = pill, inputs = sm, cards = md, media panels = lg. */
@@ -67,10 +81,19 @@
   --line: rgb(241 241 241 / 0.12);
   --line-strong: rgb(241 241 241 / 0.22);
 
-  --accent: #5b23ff;
-  --accent-text: #a189ff;
-  --accent-soft: rgb(140 110 255 / 0.14);
-  --accent-fg: #ffffff;
+  --accent: #f1f1f1;
+  --accent-text: #f1f1f1;
+  --accent-soft: rgb(241 241 241 / 0.1);
+  --accent-fg: #101010;
+
+  --danger: #ff8a8a;
+
+  --glass-bg: rgb(22 22 24 / 0.55);
+  --glass-border: rgb(255 255 255 / 0.12);
+  --glass-highlight: rgb(255 255 255 / 0.16);
+  --glass-floor: rgb(255 255 255 / 0.04);
+  --glass-shadow: 0 10px 34px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.3);
+  --glass-solid: rgb(24 24 26 / 0.97);
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4), 0 2px 8px rgb(0 0 0 / 0.3);
   --shadow-md: 0 2px 4px rgb(0 0 0 / 0.4), 0 12px 32px rgb(0 0 0 / 0.45);
@@ -94,6 +117,7 @@
   --color-accent-text: var(--accent-text);
   --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
+  --color-danger: var(--danger);
 
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
@@ -188,6 +212,54 @@
 
   .tnum {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* One slot of the project stack. Sticky so each card parks under the one
+     arriving above it. Under reduced motion the slots flatten into an ordinary
+     list, in CSS, so the markup never differs between server and client. */
+  .stack-slot {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100svh;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stack-slot {
+      position: static;
+      height: auto;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  /* Frosted panel. Layered rather than a single blur: the top highlight and the
+     inner floor are what stop it reading as flat translucent grey. */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 -1px 0 var(--glass-floor),
+      var(--glass-shadow);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background: var(--glass-solid);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Safari and Firefox without backdrop-filter would render a flat 50% wash. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background: var(--glass-solid);
+    }
   }
 }
 

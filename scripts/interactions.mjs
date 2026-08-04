@@ -1,6 +1,6 @@
 /**
  * Exercises the interactive parts that a screenshot cannot prove: theme toggle,
- * mobile menu, FAQ accordion, and the contact form's validation and error path.
+ * mobile menu, project stack, and the contact form's validation and error path.
  *
  *   node scripts/interactions.mjs [baseUrl]
  */
@@ -50,35 +50,73 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
-/* FAQ accordion. Selected structurally so copy changes do not break the test. */
+/* Scroll-driven project stack on the home page */
 {
   const page = await (
     await browser.newContext({ viewport: { width: 1280, height: 800 } })
   ).newPage();
   await page.goto(BASE, { waitUntil: "networkidle" });
 
-  const panels = page.locator("h3 > button[aria-expanded]");
-  const count = await panels.count();
-  check("FAQ renders its questions", count >= 3, `${count} found`);
+  const cards = page.locator("section:has(h2) article.origin-top");
+  const count = await cards.count();
+  check("three project cards render", count === 3, `${count} found`);
 
-  const first = panels.nth(0);
-  const second = panels.nth(1);
-  await second.scrollIntoViewIfNeeded();
+  const readScale = async (i) =>
+    cards.nth(i).evaluate((el) => {
+      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+      return Math.round(m.a * 1000) / 1000;
+    });
 
-  check("first FAQ starts open", (await first.getAttribute("aria-expanded")) === "true");
-  check("second FAQ starts collapsed", (await second.getAttribute("aria-expanded")) === "false");
+  check("first card starts unscaled", (await readScale(0)) === 1, String(await readScale(0)));
 
-  await second.click();
-  await page.waitForTimeout(500);
-  check("FAQ expands on click", (await second.getAttribute("aria-expanded")) === "true");
+  // Scroll to the end of the stack so the earlier cards have receded.
+  await page.evaluate(async () => {
+    const step = window.innerHeight * 0.5;
+    for (let y = 0; y < window.innerHeight * 3.2; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 90));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+  });
+
+  const first = await readScale(0);
+  const last = await readScale(2);
+  check("first card scales down behind the stack", first < 0.96 && first > 0.85, String(first));
+  check("last card stays at full size", last > 0.99, String(last));
+
+  const rotated = await cards.nth(0).evaluate((el) => {
+    const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+    return Math.abs(Math.round(Math.atan2(m.b, m.a) * (180 / Math.PI) * 10) / 10);
+  });
+  check("first card tilts", rotated > 1, `${rotated}deg`);
+
   check(
-    "opening one FAQ closes the other",
-    (await first.getAttribute("aria-expanded")) === "false",
+    "the stack ends with a link to the projects page",
+    await page.getByRole("link", { name: /See all projects/ }).isVisible(),
   );
+  await page.close();
+}
 
-  await second.click();
-  await page.waitForTimeout(500);
-  check("clicking again collapses it", (await second.getAttribute("aria-expanded")) === "false");
+/* Frosted navigation */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+
+  const bar = page.locator("nav[aria-label='Main']");
+  const style = await bar.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { filter: s.backdropFilter || s.webkitBackdropFilter, bg: s.backgroundColor, pos: getComputedStyle(el.closest("header")).position };
+  });
+  check("nav bar is frosted", /blur/.test(style.filter), style.filter);
+  check("nav bar is translucent", /0\.5\)|0\.55\)/.test(style.bg), style.bg);
+  check("header floats over the page", style.pos === "fixed", style.pos);
+
+  const active = page.locator("nav[aria-label='Main'] a[aria-current='page']");
+  check("current page is marked", (await active.count()) === 1, await active.innerText());
+  const activeBg = await active.evaluate((el) => getComputedStyle(el).backgroundColor);
+  check("active item is filled with ink", activeBg === "rgb(16, 16, 16)", activeBg);
   await page.close();
 }
 

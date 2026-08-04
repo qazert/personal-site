@@ -12,6 +12,9 @@ Everything lives in `content/site.ts`. Nothing else needs editing to change copy
 in the brand palette. They exist so layout and loading behaviour are real, not
 because they are good. Replace each at the same path:
 
+The three projects on the home page are the first three in `workItems`, shown
+as a scroll-driven stack. Reordering that array reorders the stack.
+
 | Path | Size | What it should be |
 | --- | --- | --- |
 | `work/part-exchange.jpg` | 1760x1100 | Part-exchange workflows, Web and iOS |
@@ -44,9 +47,6 @@ count from Decode in 2021.
 flow. It is the only hard number on the site, so make sure you are happy
 standing behind it in an interview.
 
-**The FAQ** says you are open to both a full-time role and project work. If you
-settle on one, tighten that answer and the hero subhead with it.
-
 **`home.availability`** currently reads "Working on industrial software at
 Critical Techworks". It is a status line, not an availability signal. Change or
 remove it if your situation changes.
@@ -57,6 +57,7 @@ Critical Techworks or Decode, that section is worth rebuilding.
 
 ## Not built
 
-No case study detail pages. The work section is a grid of six, as agreed. If you
-later write up individual projects, `WorkCard` will need to become a link again
-and a `/works/[slug]` route added back.
+No case study detail pages. `/projects` is a grid of six and the cards are
+deliberately not links, so nothing points at a page that does not exist. If you
+later write the projects up, `WorkCard` becomes a link again and a
+`/projects/[slug]` route comes back.

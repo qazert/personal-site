@@ -14,7 +14,7 @@ const OUT = process.env.SHOT_DIR ?? "/tmp/shots";
 const ROUTES = [
   ["home", "/"],
   ["services", "/services"],
-  ["works", "/works"],
+  ["projects", "/projects"],
   ["about", "/about"],
   ["contact", "/contact"],
   ["not-found", "/this-page-is-missing"],

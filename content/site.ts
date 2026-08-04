@@ -24,7 +24,8 @@ export const site = {
 } as const;
 
 export const nav = [
-  { label: "Work", href: "/works" },
+  { label: "Home", href: "/" },
+  { label: "Projects", href: "/projects" },
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -35,7 +36,7 @@ export const nav = [
    founder looking for a designer. */
 export const cta = {
   primary: { label: "Get in touch", href: "/contact" },
-  secondary: { label: "View work", href: "/works" },
+  secondary: { label: "View projects", href: "/projects" },
 } as const;
 
 export const home = {
@@ -45,72 +46,14 @@ export const home = {
     "Product designer in Lisbon, working on software where the user is an expert under time pressure.",
   availability: "Working on industrial software at Critical Techworks",
 
-  benefits: {
-    heading: "What I am actually good at",
-    items: [
-      {
-        title: "Turning messy real-world processes into clear screens",
-        body: "Factory floors, supply chains, clinical workflows. I spend the time to understand how the work really happens before drawing anything.",
-      },
-      {
-        title: "Designing for people who cannot stop to read a manual",
-        body: "Operators and specialists work in short bursts under pressure. Every flow has to survive being interrupted and picked back up.",
-      },
-      {
-        title: "Working close enough to engineering that designs get built",
-        body: "I define problems and requirements with engineers rather than handing finished screens over a wall, then validate through prototypes and testing.",
-      },
-    ],
+  about: {
+    heading: "A bit about me",
+    body: "I'm a Product Designer based in Lisbon with a degree in Multimedia Engineering from ISTEC and a UX Certificate from NN/G. I started out in visual and brand design, got into UX/UI and Webflow at Decode shipping products across e-commerce, SaaS, and healthcare, and now I'm focused on complex industrial UX at Critical Techworks, designing tools used across BMW manufacturing plants. I like working across the full process, from early discovery and research all the way through to testing and working side by side with engineering.",
   },
 
-  proof: {
-    heading: "Where the work has landed",
-    stats: [
-      { value: "5 years", label: "designing digital products" },
-      { value: "10%", label: "increase in adoption on a redesigned part-exchange flow" },
-      { value: "BMW plants", label: "where the products I design are used daily" },
-    ],
-    sectors: {
-      heading: "Sectors I have designed for",
-      items: [
-        "Industrial and manufacturing",
-        "Supply chain and logistics",
-        "Healthcare",
-        "E-commerce",
-        "SaaS",
-        "Security",
-      ],
-    },
-  },
-
-  faq: {
-    heading: "Questions worth asking before we talk",
-    items: [
-      {
-        q: "What kind of work are you looking for?",
-        a: "Product design on software that carries real complexity. I am open to both a full-time role and project work, and I would rather talk about the problem first and work out which arrangement fits afterwards.",
-      },
-      {
-        q: "How do you work with engineers?",
-        a: "Closely, and early. At Critical Techworks I define problems and product requirements together with engineers and operators rather than handing finished screens over. Structure gets agreed while changing it is still cheap.",
-      },
-      {
-        q: "Do you do research, or only the interface?",
-        a: "Both. Discovery activities, user flows and usability testing are part of how I get to a design, not a separate service. I hold an NN/G UX certificate and use those methods scaled to whatever time the project actually has.",
-      },
-      {
-        q: "What about design systems?",
-        a: "I design inside a system wherever one exists and extend it where it has gaps. Consistency across a growing product matters more to me than any individual screen looking good in isolation.",
-      },
-      {
-        q: "Web or mobile?",
-        a: "Both. Recent work at Critical Techworks shipped on Web and iOS in parallel, which means designing the same flow twice for two very different contexts of use.",
-      },
-      {
-        q: "Where are you based?",
-        a: "Lisbon. I work in Portuguese and English, and I am comfortable with distributed teams across European time zones.",
-      },
-    ],
+  projects: {
+    heading: "Selected projects",
+    link: "See all projects",
   },
 } as const;
 
@@ -282,14 +225,6 @@ export const workItems: WorkItem[] = [
     coverAlt: "Confederação Musical Portuguesa identity project",
   },
 ];
-
-/* Real organisations, at the level of detail the CV states. */
-export const clients = [
-  { name: "BMW", icon: "bmw" },
-  { name: "Critical Techworks", icon: null },
-  { name: "Decode", icon: null },
-  { name: "Confederação Musical Portuguesa", icon: null },
-] as const;
 
 /* --------------------------------------------------------------------------
  * ABOUT

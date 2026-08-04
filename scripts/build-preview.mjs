@@ -6,8 +6,9 @@
  *   node scripts/build-preview.mjs [baseUrl] [outFile]
  *
  * This is a preview harness, not a second implementation. The markup and the
- * stylesheet come from the real site; only navigation, theme, accordion and the
- * mobile menu are re-wired, because React is not present in the replay.
+ * stylesheet come from the real site; only navigation and theme are re-wired,
+ * because React is not present in the replay. The scroll-driven project stack
+ * is captured settled rather than replayed.
  */
 import { chromium } from "@playwright/test";
 import { readFile, writeFile, readdir } from "node:fs/promises";
@@ -19,7 +20,7 @@ const OUT = process.argv[3] ?? "preview.html";
 
 const ROUTES = [
   { path: "/", label: "Home" },
-  { path: "/works", label: "Work" },
+  { path: "/projects", label: "Projects" },
   { path: "/services", label: "Services" },
   { path: "/about", label: "About" },
   { path: "/contact", label: "Contact" },
@@ -90,9 +91,11 @@ async function capture() {
   const browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium",
   });
+  /* Captured with motion enabled so the project stack keeps its sticky layout.
+     CSS sticky still stacks the cards in the replay; only the scale and tilt,
+     which Motion drives, are missing. */
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
-    reducedMotion: "reduce",
   });
   const pages = {};
 
@@ -122,9 +125,9 @@ async function capture() {
         img.removeAttribute("sizes");
         img.setAttribute("loading", "eager");
       }
-      // Reveal wrappers still carry their settled inline transform. Strip it so
-      // nothing depends on Motion being present in the replay.
-      for (const el of document.querySelectorAll('[style*="opacity"]')) {
+      // Reveal wrappers and stack cards still carry the inline transform Motion
+      // left behind. Strip it so nothing depends on Motion in the replay.
+      for (const el of document.querySelectorAll('[style*="opacity"], [style*="transform"]')) {
         el.style.removeProperty("opacity");
         el.style.removeProperty("transform");
       }
@@ -157,12 +160,13 @@ const html = `<title>miguelpedroso.com preview</title>
     --shell-muted: #5c636f;
     --shell-dim: #858d9a;
     --shell-hover: #e2e5ea;
-    --shell-active: #5b23ff;
+    --shell-active: #101010;
     --shell-dot: #d7dbe2;
     --chrome-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
+      --shell-active: #f1f1f1;
       --shell: #17171a;
       --shell-2: #202024;
       --shell-line: #34343a;
@@ -174,6 +178,7 @@ const html = `<title>miguelpedroso.com preview</title>
     }
   }
   :root[data-theme="dark"] {
+    --shell-active: #f1f1f1;
     --shell: #17171a;
     --shell-2: #202024;
     --shell-line: #34343a;
@@ -184,6 +189,7 @@ const html = `<title>miguelpedroso.com preview</title>
     --shell-dot: #2a2a30;
   }
   :root[data-theme="light"] {
+    --shell-active: #101010;
     --shell: #eceef1;
     --shell-2: #f7f8fa;
     --shell-line: #d3d7de;
@@ -237,7 +243,7 @@ const html = `<title>miguelpedroso.com preview</title>
     white-space: nowrap;
   }
   button.chip:hover { background: var(--shell-hover); color: var(--shell-text); }
-  button.chip[aria-pressed="true"] { background: var(--shell-active); color: #fff; }
+  button.chip[aria-pressed="true"] { background: var(--shell-active); color: var(--shell-2); }
   button.chip:focus-visible { outline: 2px solid var(--shell-active); outline-offset: 2px; }
   .label {
     font-size: 11px;
@@ -391,27 +397,6 @@ function wireFrame() {
     if (!href.startsWith("/")) return;
     if (PAGES[href]) { route = href; render(); }
     else toast("That page is not part of this preview.");
-  });
-
-  const faqs = [...doc.querySelectorAll("h3 > button[aria-expanded]")];
-  faqs.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const wasOpen = btn.getAttribute("aria-expanded") === "true";
-      faqs.forEach((b) => {
-        b.setAttribute("aria-expanded", "false");
-        const panel = b.parentElement.nextElementSibling;
-        if (panel) panel.hidden = true;
-        const icon = b.querySelector("span[aria-hidden]");
-        if (icon) icon.style.transform = "";
-      });
-      if (!wasOpen) {
-        btn.setAttribute("aria-expanded", "true");
-        const panel = btn.parentElement.nextElementSibling;
-        if (panel) panel.hidden = false;
-        const icon = btn.querySelector("span[aria-hidden]");
-        if (icon) icon.style.transform = "rotate(45deg)";
-      }
-    });
   });
 
   const themeBtn = doc.querySelector('button[aria-label^="Switch to"]');

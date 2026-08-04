@@ -6,7 +6,7 @@ import { WorkCard } from "@/components/work/WorkCard";
 import { workItems } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Projects",
   description:
     "Product design for BMW manufacturing plants, plus agency work across e-commerce, healthcare, SaaS and security.",
 };
@@ -15,7 +15,7 @@ export default function WorksPage() {
   return (
     <>
       <PageHeader
-        title="Work that had to hold real complexity"
+        title="Projects that had to hold real complexity"
         subtitle="Software for factory floors, supply chains and the teams that run them, alongside earlier agency work across several sectors."
       />
 
