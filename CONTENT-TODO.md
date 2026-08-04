@@ -39,13 +39,10 @@ Confederação Musical Portuguesa, and describes each project only to the depth
 the CV already does. If your agreement with Critical Techworks is stricter than
 your own CV, tighten `workItems` in `content/site.ts`.
 
-**"5 years designing digital products"** in `home.proof.stats` counts from the
-2020 Confederação Musical Portuguesa project. Change it if you would rather
-count from Decode in 2021.
-
 **"10% increase in adoption"** is from the CV, attached to the part-exchange
-flow. It is the only hard number on the site, so make sure you are happy
-standing behind it in an interview.
+project. It is the only hard number left on the site, and it is on the first
+card of the home page stack, so make sure you are happy standing behind it in
+an interview.
 
 **`home.availability`** currently reads "Working on industrial software at
 Critical Techworks". It is a status line, not an availability signal. Change or
