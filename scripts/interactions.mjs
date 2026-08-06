@@ -97,6 +97,122 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
+/* Selected projects: two columns, level tops, measured gap to the link */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.evaluate(async () => {
+    for (let y = 0; y < 700; y += 100) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 80));
+    }
+  });
+  await page.waitForTimeout(800);
+
+  const heading = await page.locator("h2", { hasText: "Selected projects" }).boundingBox();
+  const firstCard = await page.locator("article.origin-top").first().boundingBox();
+  const delta = Math.abs(firstCard.y - heading.y);
+  check("heading sits level with the first card", delta <= 2, `${Math.round(delta)}px apart`);
+  check("heading is in the left column", heading.x < firstCard.x, `${Math.round(heading.x)} < ${Math.round(firstCard.x)}`);
+
+  await page.evaluate(async () => {
+    for (let y = 700; y < 4400; y += 250) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+  });
+  await page.waitForTimeout(500);
+  const lastCard = await page.locator("article.origin-top").last().boundingBox();
+  const link = await page.getByRole("link", { name: /See all projects/ }).boundingBox();
+  const gap = link.y - (lastCard.y + lastCard.height);
+  check("link sits 32px under the last card", Math.abs(gap - 32) <= 2, `${Math.round(gap)}px`);
+  await page.close();
+}
+
+/* Footer reveal */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  ).newPage();
+  await page.goto(`${BASE}/about`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(800);
+
+  const dock = await page.evaluate(() => ({
+    mode: document.documentElement.dataset.footerReveal,
+    pos: getComputedStyle(document.querySelector(".footer-dock")).position,
+    reserved: getComputedStyle(document.querySelector(".page-shell")).marginBottom,
+    height: document.querySelector(".footer-dock").offsetHeight,
+  }));
+  check("the footer is docked behind the page", dock.mode === "on" && dock.pos === "fixed", dock.pos);
+  check(
+    "the page reserves exactly the footer's height",
+    Math.abs(parseFloat(dock.reserved) - dock.height) <= 1,
+    `${dock.reserved} vs ${dock.height}px`,
+  );
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  const atTop = await page.evaluate(() => {
+    const el = document.elementFromPoint(innerWidth / 2, innerHeight - 40);
+    return el?.closest("footer") ? "footer" : "page";
+  });
+  check("the page covers the footer before the end", atTop === "page", atTop);
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(500);
+  const atEnd = await page.evaluate(() => {
+    const el = document.elementFromPoint(innerWidth / 2, innerHeight - 40);
+    const rect = document.querySelector("footer").getBoundingClientRect();
+    return { on: el?.closest("footer") ? "footer" : "page", flush: Math.abs(rect.bottom - innerHeight) <= 1 };
+  });
+  check("the footer is uncovered at the end", atEnd.on === "footer", atEnd.on);
+  check("the reveal finishes flush with the document", atEnd.flush);
+  await page.close();
+}
+
+/* Availability light */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+
+  const dot = page.locator(".pulse-dot");
+  check("the availability dot is there", (await dot.count()) === 1);
+  const style = await dot.evaluate((el) => ({
+    bg: getComputedStyle(el).backgroundColor,
+    anim: getComputedStyle(el, "::after").animationName,
+  }));
+  check("the dot is green", style.bg === "rgb(18, 160, 101)", style.bg);
+  check("the dot pulses", style.anim === "pulse-ring", style.anim);
+  check(
+    "the pill reads Available for work",
+    (await dot.locator("..").innerText()).trim() === "Available for work",
+  );
+  await page.close();
+}
+
+/* Section dividers */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  for (const route of ["/", "/about", "/services", "/projects"]) {
+    await page.goto(BASE + route, { waitUntil: "networkidle" });
+    const ruled = await page.evaluate(() =>
+      [...document.querySelectorAll("main section")].filter((el) => {
+        const s = getComputedStyle(el);
+        return parseFloat(s.borderTopWidth) > 0 || parseFloat(s.borderBottomWidth) > 0;
+      }).length,
+    );
+    check(`no dividers between sections on ${route}`, ruled === 0, `${ruled} ruled`);
+  }
+  await page.close();
+}
+
 /* Frosted navigation */
 {
   const page = await (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { FooterReveal } from "@/components/site/FooterReveal";
 import { ThemeScript } from "@/components/site/ThemeScript";
 import { site } from "@/content/site";
 
@@ -46,10 +47,16 @@ export default function RootLayout({
           Skip to content
         </a>
         <Header />
-        <main id="main" className="flex-1 pt-16 md:pt-20">
-          {children}
-        </main>
-        <Footer />
+        {/* Carries the page background, so it occludes the docked footer until
+            the very end of the scroll. */}
+        <div className="page-shell flex-1">
+          <main id="main" className="pt-16 md:pt-20">
+            {children}
+          </main>
+        </div>
+        <FooterReveal>
+          <Footer />
+        </FooterReveal>
       </body>
     </html>
   );

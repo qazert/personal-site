@@ -37,8 +37,10 @@
   --accent-soft: rgb(16 16 16 / 0.06);
   --accent-fg: #ffffff;
 
-  /* Semantic, deliberately not the accent: errors have to read as errors. */
+  /* Semantic, deliberately not the accent: errors have to read as errors, and
+     an availability light has to read as a light. */
   --danger: #a4232a;
+  --ok: #12a065;
 
   /* Frosted glass for the floating navigation. A web approximation of a
      refractive material: blur plus saturation, a bright top edge, and a soft
@@ -87,6 +89,7 @@
   --accent-fg: #101010;
 
   --danger: #ff8a8a;
+  --ok: #35d391;
 
   --glass-bg: rgb(22 22 24 / 0.55);
   --glass-border: rgb(255 255 255 / 0.12);
@@ -118,6 +121,7 @@
   --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
   --color-danger: var(--danger);
+  --color-ok: var(--ok);
 
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
@@ -218,12 +222,31 @@
      arriving above it. Under reduced motion the slots flatten into an ordinary
      list, in CSS, so the markup never differs between server and client. */
   .stack-slot {
+    /* Cards park at the same offset the section heading sticks to, so the two
+       columns start level and stay level through the whole stack. */
+    --stack-top: 5.5rem;
     position: sticky;
-    top: 0;
+    top: var(--stack-top);
     display: flex;
-    height: 100svh;
-    align-items: center;
+    height: calc(100svh - var(--stack-top));
+    align-items: flex-start;
     justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .stack-slot {
+      --stack-top: 7rem;
+    }
+  }
+
+  /* The last card needs no scroll runway beneath it. Without this the section
+     ends a full viewport below the final card and anything after it floats. */
+  .stack-slot:last-child {
+    height: auto;
+    /* Each card is nudged down to expose the stack's edges, and that nudge is
+       a relative offset, so it never reaches the layout. Without matching it
+       here, whatever follows the stack sits above the last card's real bottom. */
+    padding-bottom: var(--stack-last-offset, 0px);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -274,6 +297,66 @@
 
   [data-theme="dark"] .footer-signature > span {
     color: #ffffff;
+  }
+
+  /* Footer reveal. The page sits a layer above the docked footer and reserves
+     exactly its height underneath, so scrolling to the end slides the last
+     section up off it. FooterReveal sets both custom properties, and flips
+     data-footer-reveal to "off" when the footer is too tall for the viewport
+     or the visitor prefers reduced motion. */
+  .page-shell {
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg);
+  }
+
+  [data-footer-reveal="on"] .page-shell {
+    margin-bottom: var(--footer-h, 0px);
+  }
+
+  [data-footer-reveal="on"] .footer-dock {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 0;
+  }
+
+  /* Availability light. One of the few dots on the site that earns its place:
+     it reports real state, so it is allowed to move. */
+  .pulse-dot {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 999px;
+    background: var(--ok);
+  }
+
+  .pulse-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--ok);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse-dot::after {
+      animation: pulse-ring 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    70%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
   }
 
   /* Frosted panel. Layered rather than a single blur: the top highlight and the

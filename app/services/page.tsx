@@ -54,7 +54,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="border-t border-line bg-surface/60">
+      <section className="bg-surface/60">
         <div className="shell py-20 md:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <Reveal>

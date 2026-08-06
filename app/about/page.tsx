@@ -46,7 +46,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-y border-line bg-surface/60">
+      <section className="bg-surface/60">
         <div className="shell py-20 md:py-28">
           <Reveal>
             <h2 className="display-sm text-[2rem] md:text-[2.75rem]">
@@ -103,7 +103,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-line bg-surface/60">
+      <section className="bg-surface/60">
         <div className="shell py-20 md:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <Reveal>
@@ -135,7 +135,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-line">
+      <section>
         <div className="shell py-20 md:py-28">
           <div className="grid gap-12 md:grid-cols-2 md:gap-16">
             <Reveal>

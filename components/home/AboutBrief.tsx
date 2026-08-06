@@ -5,7 +5,7 @@ import { home } from "@/content/site";
 
 export function AboutBrief() {
   return (
-    <section className="border-t border-line">
+    <section>
       <div className="shell py-20 md:py-28">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           <Reveal>

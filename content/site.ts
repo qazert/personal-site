@@ -45,7 +45,7 @@ export const home = {
   // 16 words. Has to fit two lines beside the hero image at desktop.
   subhead:
     "Product designer in Lisbon, working on software where the user is an expert under time pressure.",
-  availability: "Working on industrial software at Critical Techworks",
+  availability: "Available for work",
 
   about: {
     heading: "A bit about me",

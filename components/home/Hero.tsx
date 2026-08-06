@@ -30,8 +30,9 @@ export function Hero() {
         <div>
           <motion.p
             {...rise(0)}
-            className="inline-flex rounded-pill border border-line-strong px-3.5 py-1.5 text-[0.8125rem] text-muted"
+            className="inline-flex items-center gap-2.5 rounded-pill border border-line-strong px-3.5 py-1.5 text-[0.8125rem] text-muted"
           >
+            <span className="pulse-dot" aria-hidden />
             {home.availability}
           </motion.p>
 

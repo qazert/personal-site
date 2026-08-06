@@ -20,6 +20,9 @@ const SHOWN = 3;
 const SCALE_STEP = 0.05;
 const TILT = [-3.5, 2.5, 0];
 
+/** Vertical nudge per card, so the stack shows its edges. */
+const OFFSET_STEP = 18;
+
 type CardProps = {
   item: WorkItem;
   index: number;
@@ -48,7 +51,7 @@ function Card({ item, index, total, progress, priority }: CardProps) {
   return (
     <div className="stack-slot">
       <motion.article
-        style={{ scale, rotate, top: `${index * 18}px` }}
+        style={{ scale, rotate, top: `${index * OFFSET_STEP}px` }}
         className="relative w-full origin-top will-change-transform"
       >
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-line bg-surface-2 shadow-lift sm:aspect-[16/11] lg:aspect-[16/9]">
@@ -102,7 +105,7 @@ export function StackedProjects() {
   });
 
   return (
-    <section className="border-t border-line">
+    <section>
       <div className="shell py-20 md:py-28">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           {/* Plain wrapper, then the reveal inside it: sticky cannot live on an
@@ -119,7 +122,15 @@ export function StackedProjects() {
           </div>
 
           <div>
-            <div ref={container} className="relative">
+            <div
+              ref={container}
+              className="relative"
+              style={
+                {
+                  "--stack-last-offset": `${(items.length - 1) * OFFSET_STEP}px`,
+                } as React.CSSProperties
+              }
+            >
               {items.map((item, i) => (
                 <Card
                   key={item.slug}
