@@ -239,16 +239,6 @@
     }
   }
 
-  /* The last card needs no scroll runway beneath it. Without this the section
-     ends a full viewport below the final card and anything after it floats. */
-  .stack-slot:last-child {
-    height: auto;
-    /* Each card is nudged down to expose the stack's edges, and that nudge is
-       a relative offset, so it never reaches the layout. Without matching it
-       here, whatever follows the stack sits above the last card's real bottom. */
-    padding-bottom: var(--stack-last-offset, 0px);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .stack-slot {
       position: static;
@@ -297,6 +287,18 @@
 
   [data-theme="dark"] .footer-signature > span {
     color: #ffffff;
+  }
+
+  /* Theme swap. Applied to everything for the length of the change and then
+     removed, so the two palettes cross-fade instead of cutting. */
+  [data-theme-transition="on"],
+  [data-theme-transition="on"] *,
+  [data-theme-transition="on"] *::before,
+  [data-theme-transition="on"] *::after {
+    transition-property: background-color, border-color, color, fill, stroke,
+      box-shadow, outline-color, text-decoration-color !important;
+    transition-duration: 360ms !important;
+    transition-timing-function: cubic-bezier(0.45, 0, 0.25, 1) !important;
   }
 
   /* Footer reveal. The page sits a layer above the docked footer and reserves

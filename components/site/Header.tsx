@@ -28,7 +28,19 @@ function ThemeToggle({ className = "" }: { className?: string }) {
 
   function toggle() {
     const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
+    const root = document.documentElement;
+
+    /* Colour transitions are enabled only for the length of the swap. Leaving
+       them on permanently would make every hover and every scroll reveal drag
+       its background along behind it. */
+    if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+      root.dataset.themeTransition = "on";
+      window.setTimeout(() => {
+        delete root.dataset.themeTransition;
+      }, 400);
+    }
+
+    root.dataset.theme = next;
     localStorage.setItem("theme", next);
   }
 
@@ -93,13 +105,25 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-pill px-4 py-2 text-[0.9375rem] tracking-[-0.011em] transition-colors duration-200 ${
-                  active
-                    ? "bg-accent text-accent-fg"
-                    : "text-muted hover:text-text"
+                className={`relative rounded-pill px-4 py-2 text-[0.9375rem] tracking-[-0.011em] transition-colors duration-200 ${
+                  active ? "text-accent-fg" : "text-muted hover:text-text"
                 }`}
               >
-                {item.label}
+                {/* One element shared across the items: Motion measures it in
+                    both places and animates the difference, so the fill travels
+                    to the new page instead of blinking onto it. */}
+                {active ? (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-pill bg-accent"
+                    transition={
+                      reduce
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 420, damping: 36, mass: 0.9 }
+                    }
+                  />
+                ) : null}
+                <span className="relative">{item.label}</span>
               </Link>
             );
           })}

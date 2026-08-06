@@ -90,6 +90,38 @@ const check = (name, ok, extra = "") => {
   });
   check("first card tilts", rotated > 1, `${rotated}deg`);
 
+  /* Scroll to the exact moment the front card pins. Every card has to be there,
+     fully receded: a short last slot used to shove the back two off screen. */
+  await page.evaluate(async () => {
+    const slots = document.querySelectorAll(".stack-slot");
+    const target =
+      slots[slots.length - 1].getBoundingClientRect().top + window.scrollY - 112;
+    window.scrollTo(0, target);
+    await new Promise((r) => setTimeout(r, 400));
+  });
+  await page.waitForTimeout(300);
+  const settled = await page.$$eval("article.origin-top", (els) =>
+    els.map((el) => {
+      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+      return { s: Math.round(m.a * 1000) / 1000, top: Math.round(el.getBoundingClientRect().top) };
+    }),
+  );
+  check(
+    "every card is still on screen when the front one lands",
+    settled.every((c) => c.top > 0 && c.top < 400),
+    settled.map((c) => c.top).join(", "),
+  );
+  check(
+    "the stack finishes receding as the front card lands",
+    Math.abs(settled[0].s - 0.9) < 0.01 && Math.abs(settled[2].s - 1) < 0.01,
+    settled.map((c) => c.s).join(", "),
+  );
+  check(
+    "the front card lands on the pin line, not below it",
+    Math.abs(settled[2].top - 112) <= 2,
+    `${settled[2].top}px`,
+  );
+
   check(
     "the stack ends with a link to the projects page",
     await page.getByRole("link", { name: /See all projects/ }).isVisible(),
@@ -231,8 +263,81 @@ const check = (name, ok, extra = "") => {
 
   const active = page.locator("nav[aria-label='Main'] a[aria-current='page']");
   check("current page is marked", (await active.count()) === 1, await active.innerText());
-  const activeBg = await active.evaluate((el) => getComputedStyle(el).backgroundColor);
+  // The fill lives on the shared pill inside the link, not on the link itself.
+  const activeBg = await active
+    .locator("span.absolute")
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
   check("active item is filled with ink", activeBg === "rgb(16, 16, 16)", activeBg);
+  await page.close();
+}
+
+/* The active pill travels between nav items */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+
+  const pill = page.locator("nav[aria-label='Main'] a[aria-current='page'] span.absolute");
+  const from = await pill.boundingBox();
+  await page.getByRole("link", { name: "About", exact: true }).click();
+  await page.waitForTimeout(120);
+  const midFlight = await pill.boundingBox();
+  await page.waitForTimeout(900);
+  const to = await pill.boundingBox();
+
+  check("the pill moves to the new page", Math.abs(to.x - from.x) > 20, `${Math.round(from.x)} -> ${Math.round(to.x)}`);
+  check(
+    "it travels rather than jumping",
+    Math.abs(midFlight.x - to.x) > 4 && Math.abs(midFlight.x - from.x) > 4,
+    `mid ${Math.round(midFlight.x)}`,
+  );
+  await page.close();
+}
+
+/* The theme cross-fades instead of cutting */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(400);
+
+  await page.getByRole("button", { name: /Switch to/ }).click();
+  await page.waitForTimeout(60);
+  const during = await page.evaluate(() => ({
+    flag: document.documentElement.dataset.themeTransition,
+    duration: getComputedStyle(document.body).transitionDuration,
+  }));
+  check("colours transition during the swap", during.flag === "on" && parseFloat(during.duration) > 0.2, during.duration);
+
+  await page.waitForTimeout(700);
+  const after = await page.evaluate(() => document.documentElement.dataset.themeTransition);
+  check("the transition is lifted afterwards", after === undefined);
+  await page.close();
+}
+
+/* Hero */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1300);
+
+  const hero = page.locator("main section").first();
+  const box = await hero.boundingBox();
+  check("the hero fills one screen", Math.abs(box.height - (900 - 80)) <= 2, `${Math.round(box.height)}px`);
+  check("no image or button left in the hero", (await hero.locator("img, a, button").count()) === 0);
+  check("the hero is centred", (await hero.evaluate((el) => getComputedStyle(el).textAlign)) === "center");
+
+  const lines = await page.locator("h1").evaluate((el) => {
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    return new Set([...r.getClientRects()].filter((x) => x.width > 1).map((x) => Math.round(x.top))).size;
+  });
+  check("the headline holds two lines", lines === 2, `${lines} lines`);
   await page.close();
 }
 

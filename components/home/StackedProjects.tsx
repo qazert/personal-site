@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react";
@@ -20,41 +20,47 @@ const SHOWN = 3;
 const SCALE_STEP = 0.05;
 const TILT = [-3.5, 2.5, 0];
 
-/** Vertical nudge per card, so the stack shows its edges. */
-const OFFSET_STEP = 18;
-
 type CardProps = {
   item: WorkItem;
   index: number;
   total: number;
   progress: MotionValue<number>;
+  /** Scroll progress at which each slot reaches the pin line, measured. */
+  stops: React.RefObject<number[]>;
   priority: boolean;
+  children?: React.ReactNode;
 };
 
-function Card({ item, index, total, progress, priority }: CardProps) {
+function Card({ item, index, total, progress, stops, priority, children }: CardProps) {
   const reduce = useReducedMotion();
 
-  /* The card starts receding only once the next one begins to cover it, and
-     lands at its final depth when the stack is complete.
-
-     Reduced motion collapses the output range rather than the markup: the tree
-     has to be identical on the server and on the client, or hydration breaks.
-     At progress 0 both ranges give scale 1 and rotate 0, so the first paint
-     matches either way. */
-  const enter = index / total;
+  /* Reduced motion collapses the output rather than the markup: the tree has to
+     be identical on the server and on the client, or hydration breaks. */
   const targetScale = reduce ? 1 : 1 - (total - 1 - index) * SCALE_STEP;
   const targetRotate = reduce ? 0 : (TILT[index] ?? 0);
 
-  const scale = useTransform(progress, [enter, 1], [1, targetScale]);
-  const rotate = useTransform(progress, [enter, 1], [0, targetRotate]);
+  /* A card recedes between its own pin and the last card's, so the stack
+     finishes settling exactly as the front card lands. Reading the measured
+     stops through a ref keeps this a plain derivation with no extra state. */
+  const at = (target: number) => (p: number) => {
+    const from = stops.current[index] ?? 0;
+    const to = stops.current[total - 1] ?? 1;
+    if (to <= from) return target === 1 ? 1 : 0;
+    const t = Math.min(1, Math.max(0, (p - from) / (to - from)));
+    return t;
+  };
+
+  const scale = useTransform(progress, (p) => 1 + (targetScale - 1) * at(1)(p));
+  const rotate = useTransform(progress, (p) => targetRotate * at(0)(p));
 
   return (
     <div className="stack-slot">
-      <motion.article
-        style={{ scale, rotate, top: `${index * OFFSET_STEP}px` }}
-        className="relative w-full origin-top will-change-transform"
-      >
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-line bg-surface-2 shadow-lift sm:aspect-[16/11] lg:aspect-[16/9]">
+      <div className="w-full">
+        <motion.article
+          style={{ scale, rotate }}
+          className="relative w-full origin-top will-change-transform"
+        >
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-line bg-surface-2 shadow-lift sm:aspect-[16/11] lg:aspect-[16/9]">
           <Image
             src={item.cover}
             alt={item.coverAlt}
@@ -89,8 +95,14 @@ function Card({ item, index, total, progress, priority }: CardProps) {
               {item.summary}
             </p>
           </div>
-        </div>
-      </motion.article>
+          </div>
+        </motion.article>
+
+        {/* Anything after the stack would otherwise land a viewport below the
+            front card, because each slot reserves a screen of scroll. Riding
+            inside the last slot keeps it 32px under the card it belongs to. */}
+        {children}
+      </div>
     </div>
   );
 }
@@ -99,10 +111,41 @@ export function StackedProjects() {
   const container = useRef<HTMLDivElement>(null);
   const items = workItems.slice(0, SHOWN);
 
+  /* Even spacing is only the starting guess; the real pin points come from the
+     measured layout, so the mapping survives any change to the slot geometry. */
+  const stops = useRef<number[]>(items.map((_, i) => i / items.length));
+
+  /* "end start" rather than "end end": the front card pins after the container
+     has already passed the bottom of the viewport, so measuring to the viewport
+     bottom would saturate the progress before the stack finished. */
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
+
+  useEffect(() => {
+    const el = container.current;
+    if (!el) return;
+
+    const measure = () => {
+      const height = el.offsetHeight;
+      const first = el.firstElementChild;
+      if (!height || !first) return;
+      const pin = parseFloat(getComputedStyle(first).top) || 0;
+      stops.current = [...el.children].map((slot) =>
+        Math.max(0, Math.min(1, ((slot as HTMLElement).offsetTop - pin) / height)),
+      );
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   return (
     <section>
@@ -121,39 +164,32 @@ export function StackedProjects() {
             </div>
           </div>
 
-          <div>
-            <div
-              ref={container}
-              className="relative"
-              style={
-                {
-                  "--stack-last-offset": `${(items.length - 1) * OFFSET_STEP}px`,
-                } as React.CSSProperties
-              }
-            >
-              {items.map((item, i) => (
-                <Card
-                  key={item.slug}
-                  item={item}
-                  index={i}
-                  total={items.length}
-                  progress={scrollYProgress}
-                  priority={i === 0}
-                />
-              ))}
-            </div>
-
-            <Link
-              href={cta.secondary.href}
-              className="group mt-8 inline-flex min-h-10 items-center gap-2 rounded-sm text-[0.9375rem] font-medium underline decoration-line-strong underline-offset-[6px] transition-colors hover:decoration-text"
-            >
-              {home.projects.link}
-              <ArrowRight
-                weight="bold"
-                aria-hidden
-                className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
-              />
-            </Link>
+          <div ref={container} className="relative">
+            {items.map((item, i) => (
+              <Card
+                key={item.slug}
+                item={item}
+                index={i}
+                total={items.length}
+                progress={scrollYProgress}
+                stops={stops}
+                priority={i === 0}
+              >
+                {i === items.length - 1 ? (
+                  <Link
+                    href={cta.secondary.href}
+                    className="group mt-8 inline-flex min-h-10 items-center gap-2 rounded-sm text-[0.9375rem] font-medium underline decoration-line-strong underline-offset-[6px] transition-colors hover:decoration-text"
+                  >
+                    {home.projects.link}
+                    <ArrowRight
+                      weight="bold"
+                      aria-hidden
+                      className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
+                    />
+                  </Link>
+                ) : null}
+              </Card>
+            ))}
           </div>
         </div>
       </div>
