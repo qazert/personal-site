@@ -11,10 +11,7 @@ export function Footer() {
       <div className="shell pt-14 md:pt-20">
         <div className="grid gap-10 sm:grid-cols-2 sm:gap-16">
           <div>
-            <p className="text-[0.9375rem] font-semibold tracking-[-0.02em]">
-              {site.name}
-            </p>
-            <p className="mt-2 max-w-[34ch] text-[0.9375rem] leading-[1.6] text-inverse/60">
+            <p className="max-w-[34ch] text-[0.9375rem] leading-[1.6] text-inverse/60">
               {site.role} working with software teams on interfaces that have to
               carry real complexity.
             </p>
