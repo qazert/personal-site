@@ -35,9 +35,11 @@ async function buildCss() {
   let css = await readFile(path.join(cssDir, cssFile), "utf8");
 
   const mediaDir = ".next/static/media";
+  // Whatever family is in use, keep only its latin weight-axis face.
   const latin = (await readdir(mediaDir)).find((f) =>
-    /inter-latin-wght-normal.*\.woff2$/.test(f),
+    /-latin-wght-normal.*\.woff2$/.test(f),
   );
+  if (!latin) throw new Error("No latin variable face found in .next/static/media");
   const font = await readFile(path.join(mediaDir, latin));
   const dataUri = `data:font/woff2;base64,${font.toString("base64")}`;
 
@@ -48,13 +50,14 @@ async function buildCss() {
     new RegExp(`url\\(['"]?\\.\\./media/${latin.replace(/\./g, "\\.")}['"]?\\)`, "g"),
     `url(${dataUri})`,
   );
+  const family = latin.replace(/-latin-wght-normal.*$/, "");
   css = css.replace(
-    /@font-face\{[^}]*\.\.\/media\/inter-(?!latin-wght)[^}]*\}/g,
+    new RegExp(`@font-face\\{[^}]*\\.\\./media/${family}-(?!latin-wght)[^}]*\\}`, "g"),
     "",
   );
 
   if (!css.includes("data:font/woff2")) {
-    throw new Error("Inter was not inlined; the preview would fall back silently.");
+    throw new Error("The font was not inlined; the preview would fall back silently.");
   }
   if (/\.\.\/media\//.test(css)) {
     throw new Error("Unresolved font references remain in the preview CSS.");

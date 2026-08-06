@@ -1,7 +1,7 @@
 # miguelpedroso.com
 
 Portfolio site for Miguel Pedroso, product designer. Next.js App Router,
-Tailwind v4, self-hosted Inter, Motion for interaction.
+Tailwind v4, self-hosted Open Sans, Motion for interaction.
 
 > Copy is written from the CV and is real. Imagery is still placeholder.
 > See [CONTENT-TODO.md](./CONTENT-TODO.md).
@@ -38,6 +38,11 @@ Defined once in `app/globals.css` as CSS variables, exposed to Tailwind through
   bright top edge and a soft inner floor. A web approximation of a refractive
   material, not a port of any native effect. It falls back to a solid panel
   under `prefers-reduced-transparency` and where `backdrop-filter` is missing.
+- **Footer** inverts the page, ink ground in light mode and paper in dark, and
+  closes with the name set to the full container width and cropped by the page
+  edge. `--sig-ratio` in `globals.css` is the measured width-to-font-size ratio
+  of that string in bold Open Sans; `npm run interactions` asserts the result
+  still spans the footer, so the constant cannot drift silently.
 - **Radius** one scale, one rule: buttons and tags are pills, inputs `12px`,
   cards `16px`, media panels `24px`.
 - **Theme** light and dark are both first class. `data-theme` is set on `<html>`

@@ -149,6 +149,73 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
+/* Footer: inverted ground, and the signature spanning it exactly */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await page.goto(`${BASE}/about`, { waitUntil: "networkidle" });
+  await page.locator("footer").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+
+  const footerBg = await page
+    .locator("footer")
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
+  check("footer inverts the page", footerBg === "rgb(16, 16, 16)", footerBg);
+
+  const sig = page.locator(".footer-signature");
+  const fit = await sig.evaluate((el) => {
+    const span = el.firstElementChild;
+    const range = document.createRange();
+    range.selectNodeContents(span);
+    const textW = range.getBoundingClientRect().width;
+    const boxW = el.getBoundingClientRect().width;
+    return { pct: +((textW / boxW) * 100).toFixed(1), colour: getComputedStyle(span).color };
+  });
+  check(
+    "signature spans the footer width",
+    fit.pct > 96 && fit.pct <= 100.5,
+    `${fit.pct}%`,
+  );
+  check("signature is full black on the ink ground", fit.colour === "rgb(0, 0, 0)", fit.colour);
+
+  const cropped = await sig.evaluate((el) => {
+    const span = el.firstElementChild;
+    return span.getBoundingClientRect().height > el.getBoundingClientRect().height + 4;
+  });
+  check("signature is cropped by the page edge", cropped);
+
+  const pagesCol = await page.getByRole("heading", { name: "Pages" }).count();
+  check("the Pages column is gone", pagesCol === 0);
+  check(
+    "Find me lists LinkedIn and Instagram",
+    (await page.getByRole("heading", { name: "Find me" }).count()) === 1 &&
+      (await page.locator("footer a", { hasText: "Instagram" }).count()) === 1,
+  );
+  await page.close();
+}
+
+/* Typeface */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+  const family = await page
+    .locator("h1")
+    .evaluate((el) => getComputedStyle(el).fontFamily);
+  check("Open Sans is the page typeface", /Open Sans/.test(family), family);
+  const loaded = await page.evaluate(() =>
+    document.fonts.check('700 100px "Open Sans Variable"'),
+  );
+  check("the bold weight is loaded, not synthesised", loaded);
+
+  const wordmark = await page.locator("header").innerText();
+  check("no wordmark in the header", !/Miguel/i.test(wordmark), JSON.stringify(wordmark.trim().slice(0, 40)));
+  await page.close();
+}
+
 /* Contact form: validation, then the not-configured error path */
 {
   const page = await (

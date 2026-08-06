@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/open-sans";
 
 /*
   Theme strategy: semantic CSS variables flipped by [data-theme] on <html>.
@@ -127,7 +127,7 @@
   --shadow-soft: var(--shadow-sm);
   --shadow-lift: var(--shadow-md);
 
-  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Open Sans Variable", "Open Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -193,15 +193,15 @@
   }
 
   .display {
-    font-weight: 560;
-    letter-spacing: -0.035em;
-    line-height: 1.02;
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.04;
   }
 
   .display-sm {
-    font-weight: 560;
-    letter-spacing: -0.028em;
-    line-height: 1.08;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.1;
   }
 
   .lede {
@@ -232,6 +232,48 @@
       height: auto;
       margin-bottom: 1.5rem;
     }
+  }
+
+  /* The footer signature: the name at full page width, cropped by the bottom
+     edge so only the upper half of the letterforms shows. Pure black on the
+     ink ground and pure white on the paper one, which is the one place those
+     absolutes are the right call. --sig-crop is the visible fraction of the
+     line box; below about 0.6 the letters stop being readable. */
+  .footer-signature {
+    /* --sig-ratio is the measured width-to-font-size ratio of the name set in
+       bold Open Sans. Sizing against the container rather than the viewport
+       matters: the viewport includes the reserved scrollbar gutter, which is
+       what was clipping the last letter. `npm run interactions` asserts the
+       result still spans the footer, so this constant cannot drift silently. */
+    --sig-ratio: 8.589;
+    --sig-crop: 0.58;
+    --sig-size: calc(100cqw / var(--sig-ratio));
+
+    container-type: inline-size;
+    overflow: hidden;
+    height: calc(var(--sig-size) * var(--sig-crop));
+  }
+
+  @supports not (width: 1cqw) {
+    .footer-signature {
+      --sig-size: calc(100% / var(--sig-ratio));
+    }
+  }
+
+  .footer-signature > span {
+    display: block;
+    font-size: var(--sig-size);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+    color: #000000;
+  }
+
+  [data-theme="dark"] .footer-signature > span {
+    color: #ffffff;
   }
 
   /* Frosted panel. Layered rather than a single blur: the top highlight and the

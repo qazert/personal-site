@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { List, MoonStars, Sun, X } from "@phosphor-icons/react";
-import { nav, site } from "@/content/site";
+import { nav } from "@/content/site";
 import { Button } from "@/components/ui/Button";
 
 /* The theme lives on <html>, written by ThemeScript before first paint. This
@@ -79,21 +79,12 @@ export function Header() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:pt-5">
-      {/* Three columns so the bar is optically centred regardless of the
-          wordmark's width. */}
-      <div className="mx-auto grid max-w-[1240px] grid-cols-[1fr_auto_1fr] items-center gap-4 max-md:grid-cols-1">
-        <Link
-          href="/"
-          className="pointer-events-auto hidden justify-self-start rounded-sm px-1 text-[0.9375rem] font-semibold tracking-[-0.02em] text-text lg:inline-flex lg:h-11 lg:items-center"
-        >
-          {site.name}
-        </Link>
-
+      <div className="mx-auto flex max-w-[1240px] items-center justify-center gap-4 max-md:justify-end">
         {/* Floating glass bar. Sits over the page rather than pushing it down,
             so what scrolls underneath stays partly visible through it. */}
         <nav
           aria-label="Main"
-          className="glass pointer-events-auto col-start-2 hidden justify-self-center rounded-pill p-1 md:flex md:items-center md:gap-0.5"
+          className="glass pointer-events-auto hidden rounded-pill p-1 md:flex md:items-center md:gap-0.5"
         >
           {nav.map((item) => {
             const active = isActive(item.href);
@@ -116,29 +107,19 @@ export function Header() {
           <ThemeToggle />
         </nav>
 
-        {/* Mobile: the same material, holding the wordmark and the controls. */}
-        <div className="glass pointer-events-auto flex w-full items-center justify-between gap-2 rounded-pill py-1 pl-4 pr-1 md:hidden">
-          <Link
-            href="/"
-            className="inline-flex min-h-10 items-center rounded-sm text-[0.9375rem] font-semibold tracking-[-0.02em] text-text"
+        {/* Mobile: the same material, holding just the controls. */}
+        <div className="glass pointer-events-auto flex items-center gap-0.5 rounded-pill p-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={open}
+            className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-accent-soft"
           >
-            {site.name}
-          </Link>
-          <div className="flex items-center gap-0.5">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              aria-label="Open menu"
-              aria-expanded={open}
-              className="grid size-10 place-items-center rounded-pill text-text transition-colors duration-200 hover:bg-accent-soft"
-            >
-              <List weight="regular" className="size-5" />
-            </button>
-          </div>
+            <List weight="regular" className="size-5" />
+          </button>
         </div>
-
-        <div aria-hidden className="hidden lg:block" />
       </div>
 
       <AnimatePresence>
@@ -150,10 +131,7 @@ export function Header() {
             exit={reduce ? undefined : { opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex h-16 items-center justify-between px-6">
-              <span className="text-[0.9375rem] font-semibold tracking-[-0.02em]">
-                {site.name}
-              </span>
+            <div className="flex h-16 items-center justify-end px-6">
               <button
                 type="button"
                 onClick={() => setOpen(false)}

@@ -18,8 +18,10 @@ export const site = {
   email: "mafpedroso@gmail.com",
   location: "Lisbon, Portugal",
   url: "https://miguelpedroso.com",
+  // PLACEHOLDER: confirm the Instagram handle.
   socials: [
     { label: "LinkedIn", href: "https://linkedin.com/in/miguelpedroso" },
+    { label: "Instagram", href: "https://instagram.com/miguelpedroso" },
   ],
 } as const;
 
