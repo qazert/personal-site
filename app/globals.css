@@ -221,29 +221,51 @@
   /* One slot of the project stack. Sticky so each card parks under the one
      arriving above it. Under reduced motion the slots flatten into an ordinary
      list, in CSS, so the markup never differs between server and client. */
-  .stack-slot {
+  /* Both custom properties live on the container: the slots and the runways are
+     siblings, so a value set on one would never reach the other. */
+  .stack {
     /* Cards park at the same offset the section heading sticks to, so the two
        columns start level and stay level through the whole stack. */
     --stack-top: 5.5rem;
+    /* Scroll distance between one card landing and the next arriving. */
+    --stack-run: 42svh;
+  }
+
+  .stack-slot {
     position: sticky;
     top: var(--stack-top);
     display: flex;
-    height: calc(100svh - var(--stack-top));
     align-items: flex-start;
     justify-content: center;
   }
 
+  /* The runway is a separate element, not height and not margin.
+
+     Height would leave a dead screen after the last card, since the final slot
+     has no card coming to fill it. Margin looks like it solves that, but a
+     sticky element is constrained by its *margin* box, so the runway would eat
+     the travel and shove the earlier cards off the top near the end.
+
+     An empty sibling keeps each slot exactly as tall as its card, so the stack
+     stays put and the section closes on ordinary spacing. */
+  .stack-run {
+    height: var(--stack-run);
+  }
+
   @media (min-width: 768px) {
-    .stack-slot {
+    .stack {
       --stack-top: 7rem;
+      --stack-run: 52svh;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .stack-slot {
       position: static;
-      height: auto;
-      margin-bottom: 1.5rem;
+    }
+
+    .stack-run {
+      height: 1.5rem;
     }
   }
 
@@ -287,18 +309,6 @@
 
   [data-theme="dark"] .footer-signature > span {
     color: #ffffff;
-  }
-
-  /* Theme swap. Applied to everything for the length of the change and then
-     removed, so the two palettes cross-fade instead of cutting. */
-  [data-theme-transition="on"],
-  [data-theme-transition="on"] *,
-  [data-theme-transition="on"] *::before,
-  [data-theme-transition="on"] *::after {
-    transition-property: background-color, border-color, color, fill, stroke,
-      box-shadow, outline-color, text-decoration-color !important;
-    transition-duration: 360ms !important;
-    transition-timing-function: cubic-bezier(0.45, 0, 0.25, 1) !important;
   }
 
   /* Footer reveal. The page sits a layer above the docked footer and reserves
@@ -388,6 +398,14 @@
       background: var(--glass-solid);
     }
   }
+}
+
+/* Theme swap. The whole rendering cross-fades, so no single property has to
+   travel between two values that meet in the middle. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
 }
 
 /* Motion is opt-in per component, but this is the global safety net. */

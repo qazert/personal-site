@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react";
@@ -132,8 +132,8 @@ export function StackedProjects() {
       const first = el.firstElementChild;
       if (!height || !first) return;
       const pin = parseFloat(getComputedStyle(first).top) || 0;
-      stops.current = [...el.children].map((slot) =>
-        Math.max(0, Math.min(1, ((slot as HTMLElement).offsetTop - pin) / height)),
+      stops.current = [...el.querySelectorAll<HTMLElement>(".stack-slot")].map(
+        (slot) => Math.max(0, Math.min(1, (slot.offsetTop - pin) / height)),
       );
     };
 
@@ -164,31 +164,35 @@ export function StackedProjects() {
             </div>
           </div>
 
-          <div ref={container} className="relative">
+          <div ref={container} className="stack relative">
             {items.map((item, i) => (
-              <Card
-                key={item.slug}
-                item={item}
-                index={i}
-                total={items.length}
-                progress={scrollYProgress}
-                stops={stops}
-                priority={i === 0}
-              >
-                {i === items.length - 1 ? (
-                  <Link
-                    href={cta.secondary.href}
-                    className="group mt-8 inline-flex min-h-10 items-center gap-2 rounded-sm text-[0.9375rem] font-medium underline decoration-line-strong underline-offset-[6px] transition-colors hover:decoration-text"
-                  >
-                    {home.projects.link}
-                    <ArrowRight
-                      weight="bold"
-                      aria-hidden
-                      className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
-                    />
-                  </Link>
+              <Fragment key={item.slug}>
+                <Card
+                  item={item}
+                  index={i}
+                  total={items.length}
+                  progress={scrollYProgress}
+                  stops={stops}
+                  priority={i === 0}
+                >
+                  {i === items.length - 1 ? (
+                    <Link
+                      href={cta.secondary.href}
+                      className="group mt-8 inline-flex min-h-10 items-center gap-2 rounded-sm text-[0.9375rem] font-medium underline decoration-line-strong underline-offset-[6px] transition-colors hover:decoration-text"
+                    >
+                      {home.projects.link}
+                      <ArrowRight
+                        weight="bold"
+                        aria-hidden
+                        className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
+                      />
+                    </Link>
+                  ) : null}
+                </Card>
+                {i < items.length - 1 ? (
+                  <div className="stack-run" aria-hidden />
                 ) : null}
-              </Card>
+              </Fragment>
             ))}
           </div>
         </div>

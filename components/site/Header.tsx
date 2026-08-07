@@ -30,18 +30,28 @@ function ThemeToggle({ className = "" }: { className?: string }) {
     const next = theme === "dark" ? "light" : "dark";
     const root = document.documentElement;
 
-    /* Colour transitions are enabled only for the length of the swap. Leaving
-       them on permanently would make every hover and every scroll reveal drag
-       its background along behind it. */
-    if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
-      root.dataset.themeTransition = "on";
-      window.setTimeout(() => {
-        delete root.dataset.themeTransition;
-      }, 400);
+    const apply = () => {
+      root.dataset.theme = next;
+      localStorage.setItem("theme", next);
+    };
+
+    /* A view transition cross-fades a snapshot of the old page against the new
+       one. Transitioning the colours themselves cannot work here: text and
+       background swap values, so they meet at the same grey halfway through and
+       the words vanish for a moment. Fading whole renderings never crosses.
+
+       Where the API is missing, the swap is instant. That is plainer than the
+       cross-fade but it is never broken. */
+    const startViewTransition = document.startViewTransition?.bind(document);
+    if (
+      !startViewTransition ||
+      !window.matchMedia("(prefers-reduced-motion: no-preference)").matches
+    ) {
+      apply();
+      return;
     }
 
-    root.dataset.theme = next;
-    localStorage.setItem("theme", next);
+    startViewTransition(apply);
   }
 
   return (

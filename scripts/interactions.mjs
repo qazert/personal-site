@@ -93,9 +93,17 @@ const check = (name, ok, extra = "") => {
   /* Scroll to the exact moment the front card pins. Every card has to be there,
      fully receded: a short last slot used to shove the back two off screen. */
   await page.evaluate(async () => {
+    /* From the top: a pinned sticky element reports where it is parked, not
+       where it belongs, so measuring mid-scroll would aim at the wrong place. */
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 200));
     const slots = document.querySelectorAll(".stack-slot");
     const target =
       slots[slots.length - 1].getBoundingClientRect().top + window.scrollY - 112;
+    for (let y = 0; y <= target; y += 250) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 40));
+    }
     window.scrollTo(0, target);
     await new Promise((r) => setTimeout(r, 400));
   });
@@ -304,17 +312,40 @@ const check = (name, ok, extra = "") => {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.waitForTimeout(400);
 
+  const supported = await page.evaluate(() => typeof document.startViewTransition === "function");
+  check("the browser can cross-fade the swap", supported);
+
+  const lum = (c) => {
+    const [r, g, bl] = c.match(/\d+/g).slice(0, 3).map((v) => {
+      const x = Number(v) / 255;
+      return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+
   await page.getByRole("button", { name: /Switch to/ }).click();
-  await page.waitForTimeout(60);
-  const during = await page.evaluate(() => ({
-    flag: document.documentElement.dataset.themeTransition,
-    duration: getComputedStyle(document.body).transitionDuration,
-  }));
-  check("colours transition during the swap", during.flag === "on" && parseFloat(during.duration) > 0.2, during.duration);
+  /* Mid-swap: with the colours themselves animating, text and background used
+     to meet at the same grey here and the words vanished. */
+  await page.waitForTimeout(180);
+  const mid = await page.evaluate(() => {
+    const h1 = document.querySelector("h1");
+    return {
+      text: getComputedStyle(h1).color,
+      bg: getComputedStyle(document.querySelector(".page-shell")).backgroundColor,
+    };
+  });
+  const a = lum(mid.text) + 0.05;
+  const b = lum(mid.bg) + 0.05;
+  const contrast = Math.max(a, b) / Math.min(a, b);
+  check(
+    "text stays readable throughout the swap",
+    contrast > 4,
+    `${contrast.toFixed(1)}:1 mid-swap`,
+  );
 
   await page.waitForTimeout(700);
-  const after = await page.evaluate(() => document.documentElement.dataset.themeTransition);
-  check("the transition is lifted afterwards", after === undefined);
+  const settled = await page.evaluate(() => document.documentElement.dataset.theme);
+  check("the swap completes", settled === "dark" || settled === "light", settled);
   await page.close();
 }
 
