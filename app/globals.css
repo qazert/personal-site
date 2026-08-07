@@ -12,10 +12,10 @@
 
   /* Brand */
   --brand-ink: #101010;
-  --brand-paper: #f1f1f1;
+  --brand-paper: #ffffff;
 
   /* Surfaces */
-  --bg: #f1f1f1;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #e9e9e9;
   --surface-inverse: #101010;
@@ -24,7 +24,7 @@
   --text: #101010;
   --text-muted: #5c5c5c;
   --text-faint: #8a8a8a;
-  --text-inverse: #f1f1f1;
+  --text-inverse: #ffffff;
 
   /* Lines */
   --line: rgb(16 16 16 / 0.1);
@@ -73,19 +73,19 @@
   --bg: #101010;
   --surface: #191919;
   --surface-2: #222222;
-  --surface-inverse: #f1f1f1;
+  --surface-inverse: #ffffff;
 
-  --text: #f1f1f1;
+  --text: #ffffff;
   --text-muted: #a3a3a3;
   --text-faint: #767676;
   --text-inverse: #101010;
 
-  --line: rgb(241 241 241 / 0.12);
-  --line-strong: rgb(241 241 241 / 0.22);
+  --line: rgb(255 255 255 / 0.12);
+  --line-strong: rgb(255 255 255 / 0.22);
 
-  --accent: #f1f1f1;
-  --accent-text: #f1f1f1;
-  --accent-soft: rgb(241 241 241 / 0.1);
+  --accent: #ffffff;
+  --accent-text: #ffffff;
+  --accent-soft: rgb(255 255 255 / 0.1);
   --accent-fg: #101010;
 
   --danger: #ff8a8a;

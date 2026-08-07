@@ -31,7 +31,7 @@ npm run lint
 Defined once in `app/globals.css` as CSS variables, exposed to Tailwind through
 `@theme inline`.
 
-- **Colour** `#101010` ink on `#F1F1F1` paper. The accent is the ink itself and
+- **Colour** `#101010` ink on `#FFFFFF` paper. The accent is the ink itself and
   inverts in dark mode, so a filled control is always maximum contrast against
   the page. `--danger` is separate and semantic: errors must not read as accent.
 - **Glass** the floating navigation uses `.glass`: a blur plus saturation, a

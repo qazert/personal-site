@@ -149,8 +149,10 @@ export function FluidParticlesBackground({
     let stopped = false;
 
     const draw = () => {
+      /* The site's own ink and paper, not generic black/white, so the trail
+         sits on the same ground as everything else on the page. */
       const isDark = document.documentElement.dataset.theme === "dark";
-      const trail = isDark ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)";
+      const trail = isDark ? "rgba(16, 16, 16, 0.12)" : "rgba(255, 255, 255, 0.12)";
       const dot = isDark ? "255, 255, 255" : "16, 16, 16";
 
       ctx.fillStyle = trail;
