@@ -96,7 +96,7 @@ type FluidParticlesBackgroundProps = {
  * page. Reduced motion draws one settled frame instead of looping forever.
  */
 export function FluidParticlesBackground({
-  particleCount = 900,
+  particleCount = 300,
   noiseIntensity = 0.003,
   particleSize = { min: 0.5, max: 2 },
   className = "",
@@ -173,8 +173,8 @@ export function FluidParticlesBackground({
           frame * 0.0025,
         );
         const angle = n * Math.PI * 4;
-        particle.x += Math.cos(angle) * 1.4;
-        particle.y += Math.sin(angle) * 1.4;
+        particle.x += Math.cos(angle) * 1.05;
+        particle.y += Math.sin(angle) * 1.05;
 
         if (particle.x < 0) particle.x = width;
         if (particle.x > width) particle.x = 0;
