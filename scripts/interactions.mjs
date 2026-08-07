@@ -53,82 +53,77 @@ const check = (name, ok, extra = "") => {
 /* Scroll-driven project stack on the home page */
 {
   const page = await (
-    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
   ).newPage();
   await page.goto(BASE, { waitUntil: "networkidle" });
+  await page.waitForTimeout(700);
 
-  const cards = page.locator("section:has(h2) article.origin-top");
-  const count = await cards.count();
-  check("three project cards render", count === 3, `${count} found`);
+  const cards = page.locator(".stack-card");
+  check("five project cards render", (await cards.count()) === 5, `${await cards.count()} found`);
 
-  const readScale = async (i) =>
-    cards.nth(i).evaluate((el) => {
-      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
-      return Math.round(m.a * 1000) / 1000;
-    });
+  /* Sample the pinned group at a share of its own scroll. */
+  const at = (fraction) =>
+    page.evaluate(async (f) => {
+      const stack = document.querySelector(".stack");
+      const top = stack.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, top + (stack.offsetHeight - window.innerHeight) * f);
+      await new Promise((r) => setTimeout(r, 350));
+      const box = document.querySelector(".stack-box").getBoundingClientRect();
+      const link = [...document.querySelectorAll("a")].find((a) =>
+        /See all projects/.test(a.textContent),
+      );
+      const heading = [...document.querySelectorAll("h2")].find((h) =>
+        h.textContent.includes("Selected"),
+      );
+      return {
+        boxTop: Math.round(box.top),
+        headingTop: Math.round(heading.getBoundingClientRect().top),
+        gapToLink: Math.round(link.getBoundingClientRect().top - box.bottom),
+        cards: [...document.querySelectorAll(".stack-card")].map((el) => {
+          const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+          return {
+            top: Math.round(el.getBoundingClientRect().top),
+            scale: Math.round(m.a * 1000) / 1000,
+          };
+        }),
+      };
+    }, fraction);
 
-  check("first card starts unscaled", (await readScale(0)) === 1, String(await readScale(0)));
+  const startState = await at(0);
+  check(
+    "only the first card is in place to begin with",
+    startState.cards[0].top === startState.boxTop &&
+      startState.cards.slice(1).every((c) => c.top > startState.boxTop + 400),
+    startState.cards.map((c) => c.top).join(", "),
+  );
 
-  // Scroll to the end of the stack so the earlier cards have receded.
-  await page.evaluate(async () => {
-    const step = window.innerHeight * 0.5;
-    for (let y = 0; y < window.innerHeight * 3.2; y += step) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 90));
-    }
-    await new Promise((r) => setTimeout(r, 400));
-  });
-
-  const first = await readScale(0);
-  const last = await readScale(2);
-  check("first card scales down behind the stack", first < 0.96 && first > 0.85, String(first));
-  check("last card stays at full size", last > 0.99, String(last));
-
-  const rotated = await cards.nth(0).evaluate((el) => {
-    const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
-    return Math.abs(Math.round(Math.atan2(m.b, m.a) * (180 / Math.PI) * 10) / 10);
-  });
-  check("first card tilts", rotated > 1, `${rotated}deg`);
-
-  /* Scroll to the exact moment the front card pins. Every card has to be there,
-     fully receded: a short last slot used to shove the back two off screen. */
-  await page.evaluate(async () => {
-    /* From the top: a pinned sticky element reports where it is parked, not
-       where it belongs, so measuring mid-scroll would aim at the wrong place. */
-    window.scrollTo(0, 0);
-    await new Promise((r) => setTimeout(r, 200));
-    const slots = document.querySelectorAll(".stack-slot");
-    const target =
-      slots[slots.length - 1].getBoundingClientRect().top + window.scrollY - 112;
-    for (let y = 0; y <= target; y += 250) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 40));
-    }
-    window.scrollTo(0, target);
-    await new Promise((r) => setTimeout(r, 400));
-  });
-  await page.waitForTimeout(300);
-  const settled = await page.$$eval("article.origin-top", (els) =>
-    els.map((el) => {
-      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
-      return { s: Math.round(m.a * 1000) / 1000, top: Math.round(el.getBoundingClientRect().top) };
-    }),
+  const endState = await at(1);
+  check(
+    "the group stays pinned level with the heading",
+    Math.abs(endState.boxTop - endState.headingTop) <= 2 &&
+      Math.abs(startState.boxTop - endState.boxTop) <= 1,
+    `${endState.boxTop} vs ${endState.headingTop}`,
   );
   check(
-    "every card is still on screen when the front one lands",
-    settled.every((c) => c.top > 0 && c.top < 400),
-    settled.map((c) => c.top).join(", "),
+    "the front card lands on the pin line and goes no higher",
+    endState.cards[4].top === endState.boxTop,
+    `${endState.cards[4].top} vs ${endState.boxTop}`,
   );
   check(
-    "the stack finishes receding as the front card lands",
-    Math.abs(settled[0].s - 0.9) < 0.01 && Math.abs(settled[2].s - 1) < 0.01,
-    settled.map((c) => c.s).join(", "),
+    "every card is stacked behind it, none pushed off",
+    endState.cards.every((c) => c.top > 0 && c.top <= endState.boxTop),
+    endState.cards.map((c) => c.top).join(", "),
   );
   check(
-    "the front card lands on the pin line, not below it",
-    Math.abs(settled[2].top - 112) <= 2,
-    `${settled[2].top}px`,
+    "each card sits a step further back than the one in front",
+    endState.cards.every((c, i, all) => i === 0 || c.scale > all[i - 1].scale),
+    endState.cards.map((c) => c.scale).join(", "),
   );
+
+  /* The link is anchored to the group, so it never rides over the cards. */
+  for (const [label, state] of [["start", startState], ["end", endState]]) {
+    check(`the link sits 32px under the stack at the ${label}`, state.gapToLink === 32, `${state.gapToLink}px`);
+  }
 
   check(
     "the stack ends with a link to the projects page",
@@ -137,37 +132,24 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
-/* Selected projects: two columns, level tops, measured gap to the link */
+/* Selected projects reads as two columns */
 {
   const page = await (
     await browser.newContext({ viewport: { width: 1440, height: 900 } })
   ).newPage();
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.evaluate(async () => {
-    for (let y = 0; y < 700; y += 100) {
+    for (let y = 0; y < 900; y += 100) {
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 80));
     }
   });
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(700);
 
   const heading = await page.locator("h2", { hasText: "Selected projects" }).boundingBox();
-  const firstCard = await page.locator("article.origin-top").first().boundingBox();
-  const delta = Math.abs(firstCard.y - heading.y);
-  check("heading sits level with the first card", delta <= 2, `${Math.round(delta)}px apart`);
-  check("heading is in the left column", heading.x < firstCard.x, `${Math.round(heading.x)} < ${Math.round(firstCard.x)}`);
-
-  await page.evaluate(async () => {
-    for (let y = 700; y < 4400; y += 250) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 60));
-    }
-  });
-  await page.waitForTimeout(500);
-  const lastCard = await page.locator("article.origin-top").last().boundingBox();
-  const link = await page.getByRole("link", { name: /See all projects/ }).boundingBox();
-  const gap = link.y - (lastCard.y + lastCard.height);
-  check("link sits 32px under the last card", Math.abs(gap - 32) <= 2, `${Math.round(gap)}px`);
+  const box = await page.locator(".stack-box").boundingBox();
+  check("heading sits level with the cards", Math.abs(box.y - heading.y) <= 2, `${Math.round(Math.abs(box.y - heading.y))}px apart`);
+  check("heading is in the left column", heading.x < box.x, `${Math.round(heading.x)} < ${Math.round(box.x)}`);
   await page.close();
 }
 

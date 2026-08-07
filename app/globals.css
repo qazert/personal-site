@@ -221,59 +221,81 @@
   /* One slot of the project stack. Sticky so each card parks under the one
      arriving above it. Under reduced motion the slots flatten into an ordinary
      list, in CSS, so the markup never differs between server and client. */
-  /* Both custom properties live on the container: the slots and the runways are
-     siblings, so a value set on one would never reach the other. */
+  /* The stack pins as one group. --stack-run is the scroll each card gets to
+     arrive; --stack-steps comes from the component and counts the arrivals
+     plus the pause after the last one. */
   .stack {
-    /* Cards park at the same offset the section heading sticks to, so the two
-       columns start level and stay level through the whole stack. */
     --stack-top: 5.5rem;
-    /* Scroll distance between one card landing and the next arriving. */
-    --stack-run: 42svh;
-  }
-
-  .stack-slot {
-    position: sticky;
-    top: var(--stack-top);
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  /* The runway is a separate element, not height and not margin.
-
-     Height would leave a dead screen after the last card, since the final slot
-     has no card coming to fill it. Margin looks like it solves that, but a
-     sticky element is constrained by its *margin* box, so the runway would eat
-     the travel and shove the earlier cards off the top near the end.
-
-     An empty sibling keeps each slot exactly as tall as its card, so the stack
-     stays put and the section closes on ordinary spacing. */
-  .stack-run {
-    height: var(--stack-run);
+    --stack-run: 58svh;
   }
 
   @media (min-width: 768px) {
     .stack {
       --stack-top: 7rem;
-      --stack-run: 52svh;
+      --stack-run: 68svh;
     }
   }
 
+  .stack-pin {
+    position: sticky;
+    top: var(--stack-top);
+  }
+
+  .stack-box {
+    position: relative;
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 640px) {
+    .stack-box {
+      aspect-ratio: 16 / 11;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stack-box {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .stack-card {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The scroll the pinned group travels through. It sits after the group, so
+     the pin releases exactly at the container's bottom and the section closes
+     on ordinary spacing. */
+  .stack-runway {
+    height: calc(var(--stack-run) * var(--stack-steps, 1));
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .stack-slot {
+    .stack-pin {
       position: static;
     }
 
-    .stack-run {
-      height: 1.5rem;
+    .stack-box {
+      display: grid;
+      gap: 1.5rem;
+      aspect-ratio: auto;
+    }
+
+    .stack-card {
+      position: relative;
+      inset: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    .stack-runway {
+      display: none;
     }
   }
 
   /* The footer signature: the name at full page width, cropped by the bottom
      edge so only the upper half of the letterforms shows. Pure black on the
      ink ground and pure white on the paper one, which is the one place those
-     absolutes are the right call. --sig-crop is the visible fraction of the
-     line box; below about 0.6 the letters stop being readable. */
+     absolutes are the right call. */
   .footer-signature {
     /* --sig-ratio is the measured width-to-font-size ratio of the name set in
        bold Open Sans. Sizing against the container rather than the viewport
