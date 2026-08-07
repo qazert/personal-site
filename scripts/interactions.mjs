@@ -59,15 +59,24 @@ const check = (name, ok, extra = "") => {
   await page.waitForTimeout(700);
 
   const cards = page.locator(".stack-card");
-  check("five project cards render", (await cards.count()) === 5, `${await cards.count()} found`);
+  check("four project cards render", (await cards.count()) === 4, `${await cards.count()} found`);
 
-  /* Sample the pinned group at a share of its own scroll. */
-  const at = (fraction) =>
-    page.evaluate(async (f) => {
+  /* Sample relative to the scroll where the pin lets go, which is the moment
+     the stack has to be finished by. `null` means the container's own top,
+     where nothing has arrived yet — a fixed offset back from the release would
+     land mid-animation, since the step length depends on how many cards there
+     are. */
+  const at = (offsetFromRelease) =>
+    page.evaluate(async (delta) => {
       const stack = document.querySelector(".stack");
-      const top = stack.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, top + (stack.offsetHeight - window.innerHeight) * f);
+      const container = stack.children[1];
+      const group = document.querySelector(".stack-pin");
+      const top = container.getBoundingClientRect().top + window.scrollY;
+      const stickyTop = parseFloat(getComputedStyle(group).top) || 0;
+      const release = container.offsetHeight - group.offsetHeight - stickyTop;
+      window.scrollTo(0, delta === null ? top : top + release + delta);
       await new Promise((r) => setTimeout(r, 350));
+
       const box = document.querySelector(".stack-box").getBoundingClientRect();
       const link = [...document.querySelectorAll("a")].find((a) =>
         /See all projects/.test(a.textContent),
@@ -87,43 +96,51 @@ const check = (name, ok, extra = "") => {
           };
         }),
       };
-    }, fraction);
+    }, offsetFromRelease);
 
-  const startState = await at(0);
+  const early = await at(null);
   check(
-    "only the first card is in place to begin with",
-    startState.cards[0].top === startState.boxTop &&
-      startState.cards.slice(1).every((c) => c.top > startState.boxTop + 400),
-    startState.cards.map((c) => c.top).join(", "),
+    "cards wait off screen until their turn",
+    early.cards[0].top === early.boxTop &&
+      early.cards.at(-1).top > early.boxTop + 400,
+    early.cards.map((c) => c.top).join(", "),
   );
 
-  const endState = await at(1);
+  const landed = await at(0);
   check(
-    "the group stays pinned level with the heading",
-    Math.abs(endState.boxTop - endState.headingTop) <= 2 &&
-      Math.abs(startState.boxTop - endState.boxTop) <= 1,
-    `${endState.boxTop} vs ${endState.headingTop}`,
-  );
-  check(
-    "the front card lands on the pin line and goes no higher",
-    endState.cards[4].top === endState.boxTop,
-    `${endState.cards[4].top} vs ${endState.boxTop}`,
+    "the stack finishes exactly as the pin lets go",
+    landed.cards.at(-1).top === landed.boxTop,
+    `front card ${landed.cards.at(-1).top} vs box ${landed.boxTop}`,
   );
   check(
     "every card is stacked behind it, none pushed off",
-    endState.cards.every((c) => c.top > 0 && c.top <= endState.boxTop),
-    endState.cards.map((c) => c.top).join(", "),
+    landed.cards.every((c) => c.top > 0 && c.top <= landed.boxTop),
+    landed.cards.map((c) => c.top).join(", "),
   );
   check(
     "each card sits a step further back than the one in front",
-    endState.cards.every((c, i, all) => i === 0 || c.scale > all[i - 1].scale),
-    endState.cards.map((c) => c.scale).join(", "),
+    landed.cards.every((c, i, all) => i === 0 || c.scale > all[i - 1].scale),
+    landed.cards.map((c) => c.scale).join(", "),
+  );
+  check(
+    "the group is still level with the heading when it lands",
+    Math.abs(landed.boxTop - landed.headingTop) <= 2,
+    `${landed.boxTop} vs ${landed.headingTop}`,
   );
 
   /* The link is anchored to the group, so it never rides over the cards. */
-  for (const [label, state] of [["start", startState], ["end", endState]]) {
+  for (const [label, state] of [["start", early], ["end", landed]]) {
     check(`the link sits 32px under the stack at the ${label}`, state.gapToLink === 32, `${state.gapToLink}px`);
   }
+
+  /* Past the release both columns have to leave together. Stretched to the row,
+     the heading used to outlast the cards and stay behind on its own. */
+  const leaving = await at(300);
+  check(
+    "heading and cards leave together",
+    Math.abs(leaving.boxTop - leaving.headingTop) <= 2 && leaving.boxTop < 0,
+    `${leaving.boxTop} vs ${leaving.headingTop}`,
+  );
 
   check(
     "the stack ends with a link to the projects page",

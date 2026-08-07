@@ -15,16 +15,13 @@ import {
 import { Reveal } from "@/components/ui/Reveal";
 import { home, workItems, cta, type WorkItem } from "@/content/site";
 
-const SHOWN = 5;
-
-/** Scroll left over once the last card has landed, as a share of one step. */
-const DWELL = 0.6;
+const SHOWN = 4;
 
 /** Applied per card stacked on top of this one. */
 const SCALE_STEP = 0.035;
 const LIFT_STEP = 12;
 const TILT_STEP = 1.3;
-const MAX_DEPTH = 4;
+const MAX_DEPTH = SHOWN - 1;
 
 type CardProps = {
   item: WorkItem;
@@ -109,37 +106,64 @@ function Card({ item, index, arrived, travel, priority }: CardProps) {
 
 export function StackedProjects() {
   const container = useRef<HTMLDivElement>(null);
+  const pin = useRef<HTMLDivElement>(null);
   const travel = useMotionValue(0);
+  const pace = useMotionValue(1);
   const items = workItems.slice(0, SHOWN);
-  const steps = items.length - 1 + DWELL;
+  const steps = items.length - 1;
 
+  /* Measured to the container's far edge rather than to the viewport, because
+     the pin outlives "end end" and the progress would otherwise saturate while
+     the group is still parked. */
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
 
-  /* One value drives every card: how many have arrived so far. Capped at the
-     last card, so the pause at the end holds the finished stack rather than
-     letting the front card carry on receding into it. */
-  const arrived = useTransform(scrollYProgress, (p) =>
-    Math.min(p * steps, items.length - 1),
+  /* One value drives every card: how many have arrived so far. `pace` stretches
+     the raw progress so the last card lands on the exact scroll where the pin
+     lets go, leaving no dead stretch between the stack finishing and the
+     section ending. */
+  const arrived = useTransform([scrollYProgress, pace], ([p, f]: number[]) =>
+    Math.min(Math.max(p * f * steps, 0), steps),
   );
 
   useEffect(() => {
-    const measure = () => travel.set(window.innerHeight);
+    const measure = () => {
+      travel.set(window.innerHeight);
+
+      const box = container.current;
+      const group = pin.current;
+      if (!box || !group) return;
+      const top = parseFloat(getComputedStyle(group).top) || 0;
+      const pinned = box.offsetHeight - group.offsetHeight - top;
+      pace.set(pinned > 0 ? box.offsetHeight / pinned : 1);
+    };
+
     measure();
+    const observer = new ResizeObserver(measure);
+    if (container.current) observer.observe(container.current);
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [travel]);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [travel, pace]);
 
   return (
     <section>
       <div className="shell py-20 md:py-28">
-        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
-          {/* Plain wrapper, then the reveal inside it: sticky cannot live on an
-              element Motion transforms, and the grid item has to stay stretched
-              for the heading to have any travel. */}
-          <div>
+        <div
+          className="stack grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16"
+          style={{ "--stack-steps": steps } as React.CSSProperties}
+        >
+          {/* The heading carries the same runway as the cards, and the column
+              is not stretched, so its sticky range ends on the same scroll as
+              theirs. Stretched to the row it outlasted them and stayed behind
+              while the stack left. Sticky also cannot live on the reveal
+              itself, since Motion's transform would become its containing
+              block. */}
+          <div className="lg:self-start">
             <div className="lg:sticky lg:top-28">
               <Reveal>
                 <h2 className="display-sm max-w-[10ch] text-[2rem] md:text-[2.75rem]">
@@ -147,6 +171,7 @@ export function StackedProjects() {
                 </h2>
               </Reveal>
             </div>
+            <div className="stack-runway hidden lg:block" aria-hidden />
           </div>
 
           {/* One pinned element rather than one per card. A slot per card gave
@@ -154,12 +179,8 @@ export function StackedProjects() {
               carrying the link up over the cards behind it. Pinning the group
               holds it level with the heading, and because the pin ends at the
               container's own bottom there is no dead screen afterwards. */}
-          <div
-            ref={container}
-            className="stack relative"
-            style={{ "--stack-steps": steps } as React.CSSProperties}
-          >
-            <div className="stack-pin">
+          <div ref={container} className="relative">
+            <div ref={pin} className="stack-pin">
               <div className="stack-box">
                 {items.map((item, i) => (
                   <Card
