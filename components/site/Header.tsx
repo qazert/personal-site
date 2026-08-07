@@ -100,7 +100,17 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:pt-5">
+    /* layoutScroll is what stops the fill flying in from mid-page. Motion
+       records layout in document coordinates, adding the page's scroll offset,
+       which is wrong for a fixed bar: it holds its place on screen while its
+       document position moves with the scroll. Navigating from 2000px down, the
+       fill was snapshotted 2000px below where it was drawn, so it animated up
+       from there. Motion only looks for a fixed scroll root on nodes carrying
+       this flag, and the fixed element is the header, not the bar inside it. */
+    <motion.header
+      layoutScroll
+      className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:pt-5"
+    >
       <div className="mx-auto flex max-w-[1240px] items-center justify-center gap-4 max-md:justify-end">
         {/* Floating glass bar. Sits over the page rather than pushing it down,
             so what scrolls underneath stays partly visible through it. */}
@@ -210,6 +220,6 @@ export function Header() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

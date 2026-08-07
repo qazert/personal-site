@@ -300,6 +300,37 @@ const check = (name, ok, extra = "") => {
     Math.abs(midFlight.x - to.x) > 4 && Math.abs(midFlight.x - from.x) > 4,
     `mid ${Math.round(midFlight.x)}`,
   );
+
+  /* Navigating from partway down the page used to throw the pill in from the
+     middle of the screen: Motion measures layout in document coordinates, so a
+     fixed bar looks to it like it moves with the scroll. It has to stay in the
+     bar whatever the scroll position is. */
+  for (const y of [1200, 3000]) {
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500);
+    await page.evaluate(async (to) => {
+      for (let s = 0; s <= to; s += 250) {
+        window.scrollTo(0, s);
+        await new Promise((r) => setTimeout(r, 30));
+      }
+    }, y);
+    await page.waitForTimeout(300);
+
+    const resting = (await pill.boundingBox()).y;
+    await page.getByRole("link", { name: "Projects", exact: true }).click();
+
+    let drift = 0;
+    for (let i = 0; i < 14; i++) {
+      const box = await pill.boundingBox();
+      if (box) drift = Math.max(drift, Math.abs(box.y - resting));
+      await page.waitForTimeout(35);
+    }
+    check(
+      `the pill stays in the bar when navigating from ${y}px down`,
+      drift <= 2,
+      `${Math.round(drift)}px off`,
+    );
+  }
   await page.close();
 }
 
