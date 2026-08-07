@@ -34,7 +34,14 @@ export function Hero() {
         aria-hidden
         className="absolute inset-x-0 -top-16 bottom-0 overflow-hidden md:-top-20"
       >
-        <FluidParticlesBackground />
+        {/* Fewer marks than the component's own normal density, each bigger and
+            drawn from a broader noise field, so the hero reads as a handful of
+            slow, sweeping strokes rather than a screen full of small trails. */}
+        <FluidParticlesBackground
+          particleCount={220}
+          particleSize={{ min: 1.5, max: 4 }}
+          noiseIntensity={0.0018}
+        />
       </div>
 
       <div className="shell relative flex flex-col items-center">
