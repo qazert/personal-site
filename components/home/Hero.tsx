@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { home } from "@/content/site";
 
@@ -9,6 +10,28 @@ import { home } from "@/content/site";
  */
 export function Hero() {
   const reduce = useReducedMotion();
+  const fieldRef = useRef<HTMLDivElement>(null);
+
+  /* The dot field's spotlight follows the pointer. Mouse only - a touch drag
+     fires the same events and would otherwise drag the spotlight around
+     underneath the finger, which is not what a tap is for. Written straight
+     to the style property rather than through state: this runs on every
+     pointer move, and the CSS transition (see --fx/--fy in globals.css) is
+     already doing the easing, so there is nothing for a re-render to add. */
+  const followPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse" || reduce) return;
+    const field = fieldRef.current;
+    if (!field) return;
+    const rect = field.getBoundingClientRect();
+    field.style.setProperty("--fx", `${e.clientX - rect.left}px`);
+    field.style.setProperty("--fy", `${e.clientY - rect.top}px`);
+  };
+
+  const resetPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    fieldRef.current?.style.setProperty("--fx", "50%");
+    fieldRef.current?.style.setProperty("--fy", "50%");
+  };
 
   const rise = (i: number) => ({
     initial: reduce ? false : { opacity: 0, y: 22 },
@@ -22,17 +45,22 @@ export function Hero() {
 
   return (
     /* svh rather than vh: on mobile the browser chrome collapses as you scroll,
-       and vh would make the hero grow mid-gesture. The subtraction accounts for
-       the floating navigation, so the section fills exactly one screen. */
-    <section className="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center py-16 text-center md:min-h-[calc(100svh-5rem)]">
-      {/* `<main>` carries pt-16/pt-20 so page content clears the fixed header,
-          which left a plain strip above the hero with no pattern behind it.
-          This layer reaches back up by the same amount, so the dots run
-          behind the header's frosted glass instead of stopping short of it. */}
-      <div
-        aria-hidden
-        className="dot-field absolute inset-x-0 -top-16 bottom-0 md:-top-20"
-      />
+       and vh would make the hero grow mid-gesture.
+
+       `<main>` carries pt-16/pt-20 so ordinary page content clears the fixed
+       header, but that push only comes from the top: centering inside what's
+       left over put the content 40px below the true middle of the screen,
+       not on it. -mt-16/-mt-20 cancels that push so the section spans the
+       real viewport again, and py-20 (comfortably past either header height,
+       measured at 66px/68.5px) reserves the header's clearance as padding on
+       both sides instead, which centers around zero rather than pushing
+       everything down from one side. */
+    <section
+      className="relative -mt-16 flex min-h-[100svh] flex-col items-center justify-center py-20 text-center md:-mt-20"
+      onPointerMove={followPointer}
+      onPointerLeave={resetPointer}
+    >
+      <div ref={fieldRef} aria-hidden className="dot-field absolute inset-0" />
 
       <div className="shell relative flex flex-col items-center">
         <motion.p

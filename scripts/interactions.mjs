@@ -389,9 +389,23 @@ const check = (name, ok, extra = "") => {
 
   const hero = page.locator("main section").first();
   const box = await hero.boundingBox();
-  check("the hero fills one screen", Math.abs(box.height - (900 - 80)) <= 2, `${Math.round(box.height)}px`);
+  /* The section spans the true viewport now, not the viewport minus the
+     header: -mt-16/-mt-20 cancels <main>'s push so the hero can centre
+     against the real middle of the screen instead of what's left under it. */
+  check("the hero fills one screen", Math.abs(box.height - 900) <= 2, `${Math.round(box.height)}px`);
   check("no image or button left in the hero", (await hero.locator("img, a, button").count()) === 0);
   check("the hero is centred", (await hero.evaluate((el) => getComputedStyle(el).textAlign)) === "center");
+
+  const centering = await hero.evaluate(() => {
+    const shell = document.querySelector("main section .shell");
+    const r = shell.getBoundingClientRect();
+    return { center: (r.top + r.bottom) / 2 };
+  });
+  check(
+    "hero content sits on the true vertical centre of the screen",
+    Math.abs(centering.center - 450) <= 1,
+    `${centering.center.toFixed(1)}px vs 450px`,
+  );
 
   const lines = await page.locator("h1").evaluate((el) => {
     const r = document.createRange();
@@ -399,6 +413,24 @@ const check = (name, ok, extra = "") => {
     return new Set([...r.getClientRects()].filter((x) => x.width > 1).map((x) => Math.round(x.top))).size;
   });
   check("the headline holds two lines", lines === 2, `${lines} lines`);
+
+  /* The dot field's spotlight follows the mouse and rests at centre otherwise. */
+  const restingFx = await page.evaluate(
+    () => getComputedStyle(document.querySelector(".dot-field")).getPropertyValue("--fx"),
+  );
+  check("the dot field rests at centre with no pointer", restingFx.trim() === "50%", restingFx);
+
+  await page.mouse.move(300, 200, { steps: 10 });
+  await page.waitForTimeout(700);
+  const movedFx = await page.evaluate(
+    () => getComputedStyle(document.querySelector(".dot-field")).getPropertyValue("--fx"),
+  );
+  check(
+    "the spotlight follows the mouse off centre",
+    movedFx.trim() !== "50%",
+    movedFx,
+  );
+
   await page.close();
 }
 

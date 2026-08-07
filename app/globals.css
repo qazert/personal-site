@@ -7,6 +7,20 @@
 */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Registered so the browser can tween these itself between pointer events,
+   rather than a JS loop stepping them every frame. */
+@property --fx {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+
+@property --fy {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+
 :root {
   color-scheme: light;
 
@@ -356,12 +370,19 @@
     z-index: 0;
   }
 
-  /* Hero backdrop: a static grid of dots, strongest at the centre and fading
+  /* Hero backdrop: a grid of dots, strongest under the cursor and fading
      toward every edge. The grid comes from a repeating radial-gradient; the
      fade is a separate mask layer rather than a second gradient in the same
      property, so the two don't have to agree on a shape. `--line-strong`
      already flips per theme, so there is nothing to override here for dark
-     mode. */
+     mode.
+
+     --fx/--fy hold the spotlight's centre and default to the middle, so the
+     field still reads correctly with no script, no pointer, or a touch
+     device that never fires a hover. Hero.tsx moves them on pointermove;
+     the transition is what makes the spotlight drift rather than snap, and
+     it is what @property above exists for; a plain custom property cannot
+     be animated by the browser, only replaced instantly. */
   .dot-field {
     background-image: radial-gradient(
       circle,
@@ -370,15 +391,22 @@
     );
     background-size: 24px 24px;
     -webkit-mask-image: radial-gradient(
-      ellipse 60% 55% at center,
+      ellipse 300px 280px at var(--fx) var(--fy),
       black 0%,
       transparent 75%
     );
     mask-image: radial-gradient(
-      ellipse 60% 55% at center,
+      ellipse 300px 280px at var(--fx) var(--fy),
       black 0%,
       transparent 75%
     );
+    transition: --fx 0.5s var(--ease), --fy 0.5s var(--ease);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot-field {
+      transition: none;
+    }
   }
 
   /* Availability light. One of the few dots on the site that earns its place:
