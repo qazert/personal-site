@@ -391,12 +391,12 @@
     );
     background-size: 24px 24px;
     -webkit-mask-image: radial-gradient(
-      ellipse 300px 280px at var(--fx) var(--fy),
+      ellipse 460px 420px at var(--fx) var(--fy),
       black 0%,
       transparent 75%
     );
     mask-image: radial-gradient(
-      ellipse 300px 280px at var(--fx) var(--fy),
+      ellipse 460px 420px at var(--fx) var(--fy),
       black 0%,
       transparent 75%
     );

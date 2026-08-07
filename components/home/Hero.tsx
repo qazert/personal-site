@@ -65,7 +65,7 @@ export function Hero() {
       <div className="shell relative flex flex-col items-center">
         <motion.p
           {...rise(0)}
-          className="inline-flex items-center gap-2.5 rounded-pill border border-line-strong px-3.5 py-1.5 text-[0.8125rem] text-muted"
+          className="glass inline-flex items-center gap-2.5 rounded-pill px-3.5 py-1.5 text-[0.8125rem] text-muted"
         >
           <span className="pulse-dot" aria-hidden />
           {home.availability}
