@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { home } from "@/content/site";
-import { FluidParticlesBackground } from "@/components/ui/FluidParticlesBackground";
 
 /**
  * Centred, one screen tall. Motion is a single staggered entry: it sets the
@@ -27,15 +26,13 @@ export function Hero() {
        the floating navigation, so the section fills exactly one screen. */
     <section className="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center py-16 text-center md:min-h-[calc(100svh-5rem)]">
       {/* `<main>` carries pt-16/pt-20 so page content clears the fixed header,
-          which left a plain strip above the hero with no field behind it. This
-          layer reaches back up by the same amount, so the particles run behind
-          the header's frosted glass instead of stopping at its lower edge. */}
+          which left a plain strip above the hero with no pattern behind it.
+          This layer reaches back up by the same amount, so the dots run
+          behind the header's frosted glass instead of stopping short of it. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 -top-16 bottom-0 overflow-hidden md:-top-20"
-      >
-        <FluidParticlesBackground />
-      </div>
+        className="dot-field absolute inset-x-0 -top-16 bottom-0 md:-top-20"
+      />
 
       <div className="shell relative flex flex-col items-center">
         <motion.p

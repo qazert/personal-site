@@ -356,6 +356,31 @@
     z-index: 0;
   }
 
+  /* Hero backdrop: a static grid of dots, strongest at the centre and fading
+     toward every edge. The grid comes from a repeating radial-gradient; the
+     fade is a separate mask layer rather than a second gradient in the same
+     property, so the two don't have to agree on a shape. `--line-strong`
+     already flips per theme, so there is nothing to override here for dark
+     mode. */
+  .dot-field {
+    background-image: radial-gradient(
+      circle,
+      var(--line-strong) 1px,
+      transparent 1.5px
+    );
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 60% 55% at center,
+      black 0%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(
+      ellipse 60% 55% at center,
+      black 0%,
+      transparent 75%
+    );
+  }
+
   /* Availability light. One of the few dots on the site that earns its place:
      it reports real state, so it is allowed to move. */
   .pulse-dot {
