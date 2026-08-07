@@ -461,6 +461,27 @@ const check = (name, ok, extra = "") => {
   );
   check("signature is full black on the ink ground", fit.colour === "rgb(0, 0, 0)", fit.colour);
 
+  /* The same footer, switched to dark: the ground and the signature colour
+     invert together. A previous pass made both #FFFFFF at once, so the name
+     sat at zero contrast against its own background and read as gone. */
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "dark";
+  });
+  await page.waitForTimeout(200);
+  const darkFit = await page.evaluate(() => {
+    const footer = document.querySelector("footer");
+    const span = document.querySelector(".footer-signature > span");
+    return {
+      footerBg: getComputedStyle(footer).backgroundColor,
+      sigColour: getComputedStyle(span).color,
+    };
+  });
+  check(
+    "the signature stays visible on the dark-mode footer",
+    darkFit.sigColour !== darkFit.footerBg,
+    `signature ${darkFit.sigColour} on footer ${darkFit.footerBg}`,
+  );
+
   const cropped = await sig.evaluate((el) => {
     const span = el.firstElementChild;
     return span.getBoundingClientRect().height > el.getBoundingClientRect().height + 4;

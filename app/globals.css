@@ -294,8 +294,9 @@
 
   /* The footer signature: the name at full page width, cropped by the bottom
      edge so only the upper half of the letterforms shows. Pure black on the
-     ink ground and pure white on the paper one, which is the one place those
-     absolutes are the right call. */
+     ink ground in light mode, a hair off pure white on the paper ground in
+     dark mode — that ground is #FFFFFF now, and the signature would vanish
+     at zero contrast if it matched exactly. */
   .footer-signature {
     /* --sig-ratio is the measured width-to-font-size ratio of the name set in
        bold Open Sans. Sizing against the container rather than the viewport
@@ -330,7 +331,7 @@
   }
 
   [data-theme="dark"] .footer-signature > span {
-    color: #ffffff;
+    color: #f1f1f1;
   }
 
   /* Footer reveal. The page sits a layer above the docked footer and reserves
