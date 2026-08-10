@@ -3,8 +3,9 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { CtaBand } from "@/components/site/CtaBand";
 import { Reveal } from "@/components/ui/Reveal";
 import { WorkCard } from "@/components/work/WorkCard";
-import { StackedOfferings } from "@/components/projects/StackedOfferings";
-import { workItems } from "@/content/site";
+import { OfferingsGrid } from "@/components/services/OfferingsGrid";
+import { ProcessSteps } from "@/components/services/ProcessSteps";
+import { services, workItems } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -30,7 +31,18 @@ export default function WorksPage() {
         </div>
       </section>
 
-      <StackedOfferings />
+      <section className="shell pb-10 pt-20 md:pb-14 md:pt-28">
+        <Reveal>
+          <h2 className="display-sm max-w-[16ch] text-[2rem] md:text-[2.75rem]">
+            {services.headline}
+          </h2>
+          <p className="lede mt-4 max-w-[52ch] text-[0.9375rem] md:text-base">
+            {services.subhead}
+          </p>
+        </Reveal>
+      </section>
+      <OfferingsGrid />
+      <ProcessSteps />
 
       <CtaBand
         heading="Want to talk about one of these?"

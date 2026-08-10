@@ -67,7 +67,6 @@ export const services = {
   headline: "How I work, and what I bring",
   subhead:
     "The same set of skills applied whether I am embedded in a product team or brought in for a specific piece of work.",
-  link: "See all services",
 
   offerings: [
     {
@@ -138,8 +137,6 @@ export const services = {
     ],
   },
 } as const;
-
-export type ServiceOffering = (typeof services)["offerings"][number];
 
 /* --------------------------------------------------------------------------
  * WORK

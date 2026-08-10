@@ -170,7 +170,8 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
-/* Projects page: the services offerings, stacked the same way */
+/* Projects page: services content reused, same structure as /services, no
+   scroll animation */
 {
   const page = await (
     await browser.newContext({ viewport: { width: 1440, height: 900 } })
@@ -178,44 +179,35 @@ const check = (name, ok, extra = "") => {
   await page.goto(`${BASE}/projects`, { waitUntil: "networkidle" });
   await page.waitForTimeout(500);
 
-  const cards = page.locator(".stack-box-offer .stack-card");
-  check("four offerings render", (await cards.count()) === 4, `${await cards.count()} found`);
-
   const heading = page.locator("h2", { hasText: "How I work, and what I bring" });
   check("the offerings heading is on the page", (await heading.count()) === 1);
 
-  const stackTop = await page
-    .locator(".stack-box-offer")
-    .evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
-
-  const at = (offsetFromTop) =>
-    page.evaluate(async (y) => {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 350));
-      return [...document.querySelectorAll(".stack-box-offer .stack-card")].map(
-        (el) => Math.round(el.getBoundingClientRect().top),
-      );
-    }, stackTop + offsetFromTop);
-
-  const early = await at(-300);
   check(
-    "offering cards wait their turn before scrolling in",
-    early[0] < early.at(-1),
-    early.join(", "),
+    "no leftover scroll-stack element from the earlier version",
+    (await page.locator(".stack-box-offer, .stack-pin, .stack-runway").count()) === 0,
   );
 
-  const settled = await at(2200);
-  const spread = Math.max(...settled) - Math.min(...settled);
+  const cards = page.locator("article[id]");
+  check("four offerings render as a plain grid", (await cards.count()) === 4, `${await cards.count()} found`);
+
+  const positions = await cards.evaluateAll((els) =>
+    els.map((el) => Math.round(el.getBoundingClientRect().top)),
+  );
   check(
-    "settled offering cards are stacked close together, not scattered",
-    spread > 0 && spread < 200,
-    settled.join(", "),
+    "offering cards sit in normal document flow, not pinned or stacked",
+    new Set(positions).size > 1,
+    positions.join(", "),
   );
 
-  check(
-    "the offerings stack links to the services page",
-    await page.getByRole("link", { name: "See all services" }).isVisible(),
-  );
+  const processHeading = page.locator("h2", { hasText: "How the work runs" });
+  check("the process section is on the projects page", (await processHeading.count()) === 1);
+
+  for (const step of ["Frame the problem", "Design in the open", "Validate, then ship"]) {
+    check(
+      `process step "${step}" renders`,
+      await page.getByRole("heading", { name: step, level: 3 }).isVisible(),
+    );
+  }
   await page.close();
 }
 
