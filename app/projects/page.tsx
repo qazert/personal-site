@@ -45,8 +45,8 @@ export default function WorksPage() {
       <ProcessSteps />
 
       <CtaBand
-        heading="Want to talk about one of these?"
-        body="I am happy to walk through any of this work in detail, including what did not go to plan."
+        heading="Have something in mind?"
+        body="Tell me about it, I'd be glad to help however I can."
       />
     </>
   );
