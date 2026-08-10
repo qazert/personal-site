@@ -170,6 +170,55 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
+/* Projects page: the services offerings, stacked the same way */
+{
+  const page = await (
+    await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  ).newPage();
+  await page.goto(`${BASE}/projects`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+
+  const cards = page.locator(".stack-box-offer .stack-card");
+  check("four offerings render", (await cards.count()) === 4, `${await cards.count()} found`);
+
+  const heading = page.locator("h2", { hasText: "How I work, and what I bring" });
+  check("the offerings heading is on the page", (await heading.count()) === 1);
+
+  const stackTop = await page
+    .locator(".stack-box-offer")
+    .evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+
+  const at = (offsetFromTop) =>
+    page.evaluate(async (y) => {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 350));
+      return [...document.querySelectorAll(".stack-box-offer .stack-card")].map(
+        (el) => Math.round(el.getBoundingClientRect().top),
+      );
+    }, stackTop + offsetFromTop);
+
+  const early = await at(-300);
+  check(
+    "offering cards wait their turn before scrolling in",
+    early[0] < early.at(-1),
+    early.join(", "),
+  );
+
+  const settled = await at(2200);
+  const spread = Math.max(...settled) - Math.min(...settled);
+  check(
+    "settled offering cards are stacked close together, not scattered",
+    spread > 0 && spread < 200,
+    settled.join(", "),
+  );
+
+  check(
+    "the offerings stack links to the services page",
+    await page.getByRole("link", { name: "See all services" }).isVisible(),
+  );
+  await page.close();
+}
+
 /* Footer reveal */
 {
   const page = await (

@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { CtaBand } from "@/components/site/CtaBand";
 import { Reveal } from "@/components/ui/Reveal";
 import { WorkCard } from "@/components/work/WorkCard";
+import { StackedOfferings } from "@/components/projects/StackedOfferings";
 import { workItems } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -28,6 +29,8 @@ export default function WorksPage() {
           ))}
         </div>
       </section>
+
+      <StackedOfferings />
 
       <CtaBand
         heading="Want to talk about one of these?"

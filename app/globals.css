@@ -277,6 +277,20 @@
     inset: 0;
   }
 
+  /* Same stack, text cards instead of images: a fixed height stands in for
+     the aspect-ratio crop, since a title, a summary and a four-line checklist
+     need guaranteed room rather than whatever a photo's ratio leaves behind. */
+  .stack-box-offer {
+    position: relative;
+    height: 500px;
+  }
+
+  @media (min-width: 640px) {
+    .stack-box-offer {
+      height: 400px;
+    }
+  }
+
   /* The scroll the pinned group travels through. It sits after the group, so
      the pin releases exactly at the container's bottom and the section closes
      on ordinary spacing. */
@@ -299,6 +313,18 @@
       position: relative;
       inset: auto;
       aspect-ratio: 16 / 9;
+    }
+
+    .stack-box-offer {
+      display: grid;
+      gap: 1.5rem;
+      height: auto;
+    }
+
+    .stack-box-offer .stack-card {
+      position: relative;
+      inset: auto;
+      aspect-ratio: auto;
     }
 
     .stack-runway {
