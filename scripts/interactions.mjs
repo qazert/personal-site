@@ -170,8 +170,8 @@ const check = (name, ok, extra = "") => {
   await page.close();
 }
 
-/* Projects page: services content reused, same structure as /services, no
-   scroll animation */
+/* Projects page: the former Services page content, folded in as a plain
+   section, no scroll animation */
 {
   const page = await (
     await browser.newContext({ viewport: { width: 1440, height: 900 } })
@@ -280,7 +280,7 @@ const check = (name, ok, extra = "") => {
   const page = await (
     await browser.newContext({ viewport: { width: 1280, height: 800 } })
   ).newPage();
-  for (const route of ["/", "/about", "/services", "/projects"]) {
+  for (const route of ["/", "/about", "/projects"]) {
     await page.goto(BASE + route, { waitUntil: "networkidle" });
     const ruled = await page.evaluate(() =>
       [...document.querySelectorAll("main section")].filter((el) => {
@@ -493,8 +493,8 @@ const check = (name, ok, extra = "") => {
     (await page.evaluate(() => document.body.style.overflow)) === "hidden",
   );
 
-  await page.getByRole("navigation", { name: "Mobile" }).getByText("Services").click();
-  await page.waitForURL("**/services");
+  await page.getByRole("navigation", { name: "Mobile" }).getByText("About").click();
+  await page.waitForURL("**/about");
   await page.waitForTimeout(400);
   check("menu closes after navigating", (await page.getByRole("button", { name: "Close menu" }).count()) === 0);
   check(

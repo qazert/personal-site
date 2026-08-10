@@ -1,11 +1,10 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { services } from "@/content/site";
 
-/** "How the work runs": title left, three steps right. Shared by the
- *  Services page and the Projects page. */
+/** "How the work runs": title left, three steps right. */
 export function ProcessSteps() {
   return (
-    <section className="bg-surface/60">
+    <section>
       <div className="shell py-20 md:py-28">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <Reveal>

@@ -21,7 +21,6 @@ const OUT = process.argv[3] ?? "preview.html";
 const ROUTES = [
   { path: "/", label: "Home" },
   { path: "/projects", label: "Projects" },
-  { path: "/services", label: "Services" },
   { path: "/about", label: "About" },
   { path: "/contact", label: "Contact" },
 ];

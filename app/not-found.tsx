@@ -9,8 +9,8 @@ export default function NotFound() {
         This page does not exist
       </h1>
       <p className="lede mt-5 max-w-[44ch] text-[1.0625rem]">
-        The link may be out of date. The work and the services pages are the
-        best places to pick things back up.
+        The link may be out of date. The projects page is the best place to
+        pick things back up.
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button href={cta.secondary.href} size="lg">

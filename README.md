@@ -20,7 +20,7 @@ npm run lint
 | Path | What |
 | --- | --- |
 | `content/site.ts` | Every word on the site. Copy changes happen here and nowhere else. |
-| `app/` | Routes: home, `/projects`, `/services`, `/about`, `/contact`. |
+| `app/` | Routes: home, `/projects`, `/about`, `/contact`. |
 | `components/site/` | Header, footer, page header, CTA band. |
 | `components/ui/` | Button and the scroll reveal wrapper. |
 | `app/globals.css` | Design tokens: colour, radius, elevation, type utilities. |
